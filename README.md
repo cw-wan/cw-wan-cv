@@ -160,6 +160,8 @@ Education uses `\degreefield{degree}{discipline}`: Inter semibold for the degree
 
 Use `positiongroup` for consecutive appointments at the same institution, and `\careerrole{title}{dates}{description}` for each appointment. A shared institution heading with its location on the right and a subtle vertical timeline connect the roles, each retaining its own dates and linked publications. The group is kept on one page. Non-consecutive appointments (e.g. the SLB internship and subsequent doctorate) retain individual entries in chronological order. This component uses the standard `tikz` package.
 
+All work-experience titles use the shared `\cvrole{...}` style: Inter Italic at regular weight, 10.2 pt with 12.8 pt line spacing. Both `\entry` and `\careerrole` use it; institution headings stay semibold, while dates and locations remain upright.
+
 ```tex
 \begin{positiongroup}{Institution}{Location}
 \careerrole{Most recent position}{Dates}{Description.}
