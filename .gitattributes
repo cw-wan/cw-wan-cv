@@ -1,0 +1,2 @@
+# Keep PDF byte offsets intact, including small vector icon assets.
+*.pdf binary

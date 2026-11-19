@@ -111,6 +111,13 @@
 
 % School logos span the institution and degree lines only.
 \RequirePackage{graphicx}
+% Bundled vector icons; keep each contact label together and separate with space.
+\newcommand{\contactitem}[2]{\mbox{%
+  \makebox[9pt][c]{\raisebox{-0.7pt}[8pt][1pt]{%
+    \includegraphics[width=9pt,height=8pt,keepaspectratio]{assets/icons/#1.pdf}}}%
+  \hspace{3.5pt}#2}}
+\newcommand{\contactsep}{\hspace{13pt}}
+
 \newcommand{\educationentry}[6]{%
   \par\addvspace{5pt}\noindent
   \begin{minipage}[c]{9mm}

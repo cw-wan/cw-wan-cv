@@ -38,6 +38,7 @@ Uses BibTeX, not Biber. Required standard packages: geometry, fontspec, xcolor, 
 - `cv-publications.bst`: custom BibTeX display style, year grouping, type-based labels, author-role markers and entry highlighting.
 - `.latexmkrc`: compilation settings.
 - `fonts/`: bundled static Newsreader and Inter fonts and their SIL Open Font Licenses.
+- `assets/icons/`: Font Awesome contact icons, original SVGs, vector PDFs and license/source notes.
 - `main.pdf`: compiled preview.
 
 ## Cite a publication inside an experience
@@ -190,6 +191,8 @@ The research summary now states the vision of trustworthy AI for sustainable hum
 ## Current color and contact settings
 
 The palette uses deep navy headings (#18324D), navy accents (#24486B), charcoal body text (#202C3A), slate-blue secondary text (#66788A), and pale blue-gray rules (#D9E2EA). Official university logos retain their original colors. Education annotations are indented 12 mm to align with institution and degree text. The contact email and mailto link are cwan5@slb.com.
+
+The contact row pairs location, email, LinkedIn, Google Scholar and GitHub labels with navy vector icons from Font Awesome Free 6.7.2. The GitHub item links to https://github.com/cw-wan. Entries use whitespace instead of bullet separators. `\contactitem{icon-name}{label}` and `\contactsep` in `cv-style.sty` control icon size and spacing; wrap the entire item in `\href` to make both icon and label clickable. The original SVGs and preconverted PDF assets are bundled, so regular compilation needs no additional package, conversion tool or network access. See `assets/icons/README.md` for sources and attribution.
 
 
 ## Unified date typography
