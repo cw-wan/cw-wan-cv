@@ -212,7 +212,7 @@ FUNCTION {output.entry}
     }
   if$
   "." write$
-  cvhighlight empty$ 'skip$ { "\quad\pubhighlight[" write$ cvhighlightcolor empty$ { "oral" } { cvhighlightcolor } if$ write$ "]{" write$ cvhighlight write$ "}" write$ } if$
+  cvhighlight empty$ 'skip$ { "~\pubhighlight[" write$ cvhighlightcolor empty$ { "oral" } { cvhighlightcolor } if$ write$ "]{" write$ cvhighlight write$ "}" write$ } if$
   newline$
   "\end{pubentry}" write$ newline$ newline$
 }
