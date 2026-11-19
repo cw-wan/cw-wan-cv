@@ -39,6 +39,7 @@ Uses BibTeX, not Biber. Required standard packages: geometry, fontspec, xcolor, 
 - `.latexmkrc`: compilation settings.
 - `fonts/`: bundled static Newsreader and Inter fonts and their SIL Open Font Licenses.
 - `assets/icons/`: Font Awesome contact icons, original SVGs, vector PDFs and license/source notes.
+- `scripts/prepare_logo.py`: optional raster-logo trimming and square-canvas utility.
 - `main.pdf`: compiled preview.
 
 ## Cite a publication inside an experience
@@ -113,6 +114,25 @@ The publication list follows the supplied reference format: `C2. Authors. Title 
 
 Edit the `ink`, `accent`, `muted` and `hairline` colors in `cv-style.sty`; `pubshade` controls the first- and equal-first-author entry background. Body font and leading are set in `\AtBeginDocument`; section spacing and entry spacing are also centralized there. The first page includes the complete Inria experience, with an explicit page break before Fudan University. The Inria supervisor line wraps naturally instead of forcing an extra line. Publication entries stay together on one page. As experience grows, revisit the page break and allow additional pages rather than shrinking text excessively. The footer date is intentionally fixed and should be updated when revising the CV.
 
+## Prepare raster logos
+
+The original `assets/soochow.png` is preserved. Its 328 x 309 canvas contains 9 px of transparent space on the left and 11 px on the right, making the visible seal smaller than the IP Paris logo. The CV now uses `assets/soochow-trimmed.png`: the 308 x 304 artwork is centered on a transparent 308 x 308 square without scaling or distortion. School logos are centered in the same 9 mm box. IP Paris already fills its canvas and keeps its original vector PDF.
+
+To regenerate the prepared PNG:
+
+```sh
+python -m pip install -r scripts/requirements.txt
+python scripts/prepare_logo.py assets/soochow.png assets/soochow-trimmed.png --square
+```
+
+The script accepts raster formats supported by Pillow and writes a lossless RGBA PNG to a different path. It trims transparent borders, or near-white borders on opaque images, while retaining interior colors and transparency. Use `--background transparent` or `--background '#ffffff'` to select detection explicitly; `--tolerance` adjusts background-color tolerance, `--alpha-threshold` adjusts alpha detection, and `--padding` adds transparent pixels around the crop. `--square` centers the artwork without resizing it. Blank images are rejected. These tools are only needed when preparing a new logo; normal XeLaTeX compilation uses the bundled result.
+
+Run the image-processing checks with:
+
+```sh
+python -m unittest discover -s scripts -p 'test_prepare_logo.py'
+```
+
 ## Content sources and items to verify
 
 Prepared on 10 September 2026.
@@ -178,7 +198,7 @@ Publication numbers increase with the `year` field within each type, across the 
 
 ## November 2026 CV update
 
-- Education logos are in `assets/`; the vector IP Paris source and PDF plus the Soochow PNG are included for compilation. The logos span only the institution and degree lines.
+- Education logos are in `assets/`; the vector IP Paris source and PDF plus the original and prepared Soochow PNGs are included. Compilation uses the prepared Soochow image. The logos span only the institution and degree lines.
 - MSc: grade 18.0/20.0, Mention Très Bien (with highest honors); IP Paris PhD Track full tuition waiver (14k €). BEng: grade 3.9/4.0, rank 1/79. These details come from the supplied education screenshot; the waiver amount is presented as a rounded two-year figure using compact k/m notation at the user's request.
 - Talk labels use `(Talk)`. Journal reviewing precedes conference reviewing. TAFFC: since 2026; TASLP and conference reviewing: since 2025, as confirmed by the user.
 - Journal metrics: 2025 JIF 11.3 (TAFFC) and 5.2 (TASLP), published in June 2026. Source: IEEE Title List, September 2026, pages 2–3, https://open.ieee.org/wp-content/uploads/IEEE-Title-List-September-2026-CAPES.pdf (checked 18 November 2026). The source attributes TASLP metrics to its former IEEE/ACM title. Values in the CV link to this source.

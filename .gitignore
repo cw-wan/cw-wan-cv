@@ -2,6 +2,10 @@
 /output/
 /tmp/
 
+# Optional image-preparation utility.
+__pycache__/
+*.py[cod]
+
 # LaTeX intermediate files; keep the published main.pdf tracked.
 *.aux
 *.bbl
