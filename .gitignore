@@ -1,0 +1,15 @@
+# Local build output and temporary review files.
+/output/
+/tmp/
+
+# LaTeX intermediate files; keep the published main.pdf tracked.
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.xdv

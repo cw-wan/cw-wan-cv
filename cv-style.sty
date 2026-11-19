@@ -43,9 +43,26 @@
 \newcommand{\pubauthors}[1]{{\fontsize{9.5}{13}\selectfont #1}}
 \newcommand{\pubvenue}[1]{{\fontsize{9.5}{13}\selectfont\bfseries\color{accent}#1}}
 \newcommand{\pubnote}[1]{{\fontsize{9}{13}\selectfont\color{muted}#1}}
+\newcommand{\publicationlegend}{{\fontsize{9}{11}\selectfont\color{muted}%
+  \mbox{C = Conference paper}\qquad\mbox{J = Journal paper}\qquad
+  \mbox{* = Equal contribution}\qquad
+  \mbox{\textdagger{} = Corresponding author}\par}}
+\newcommand{\pubyear}[1]{\par\addvspace{5pt}\Needspace{6\baselineskip}%
+  {\fontsize{10}{12}\selectfont\bfseries\color{heading}#1\par}\nobreak\vspace{3pt}}
+\definecolor{pubshade}{HTML}{F0F4F8}
+% Keep each publication together; tint first- or equal-first-author entries.
+\NewDocumentEnvironment{pubentry}{m +b}{%
+  \begingroup\setlength{\fboxsep}{3pt}%
+  \def\pubentrycolor{white}\ifnum#1=1\def\pubentrycolor{pubshade}\fi
+  \noindent\hspace*{-3pt}\colorbox{\pubentrycolor}{%
+    \begin{minipage}[t]{\dimexpr\linewidth-3pt\relax}%
+      \small\raggedright\setlength{\parskip}{2pt}#2\par
+    \end{minipage}}\par
+  \endgroup
+}{}
 \makeatletter
 \renewenvironment{thebibliography}[1]{%
-  \list{\@biblabel{\@arabic\c@enumiv}}{\settowidth\labelwidth{[c99]}\leftmargin\labelwidth\advance\leftmargin\labelsep\usecounter{enumiv}\setlength{\itemsep}{8pt}\setlength{\parsep}{2pt}\setlength{\topsep}{0pt}}%
+  \list{\@biblabel{\@arabic\c@enumiv}}{\settowidth\labelwidth{[C99]}\leftmargin\labelwidth\advance\leftmargin\labelsep\usecounter{enumiv}\setlength{\itemsep}{4pt}\setlength{\parsep}{2pt}\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}%
   \small\raggedright\clubpenalty=10000\widowpenalty=10000
 }{\endlist}
 \renewcommand{\@biblabel}[1]{{\fontsize{9}{12}\selectfont\color{muted}#1}}

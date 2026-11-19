@@ -3,7 +3,7 @@
 \usepackage{cv-style}
 \begin{document}
 \thispagestyle{firstpage}
-% Curated publication order; labels and experience references stay synchronized.
+% Tie order within each year; publication labels and citations stay synchronized.
 \nocite{wan2026grammar,hou2026grounding,wan2025emodynamix}
 {\fontsize{9}{12}\selectfont\color{accent}\addfontfeatures{LetterSpace=14}CURRICULUM VITAE}\par
 \vspace{5pt}
@@ -50,17 +50,18 @@ My research aims to advance trustworthy AI for sustainable human--AI co-evolutio
 \item Master's thesis: multi-agent systems for multivariate time-series event detection. Grade: \textbf{19/20}.
 \end{itemize}
 
-\clearpage
-\fontsize{9.5}{11.5}\selectfont
-\titlespacing*{\section}{0pt}{6pt}{5pt}
+\begin{samepage}
 \entry{Inria Paris}{Apr 2024 -- Aug 2024}{Student Researcher\enspace\textnormal{\small (M1 research internship)}}{Paris, France}
-\detail{Supervisors: Prof. Matthieu Labeau (S2A, Télécom Paris);\\
-Prof. Chloé Clavel (ALMAnaCH, Inria Paris).}
+\detail{Supervisors: Prof. Matthieu Labeau (S2A, Télécom Paris); Prof. Chloé Clavel (ALMAnaCH, Inria Paris).}
 \begin{itemize}
 \item Studied socio-emotional dialogue strategy planning for counselling LLM agents.
 \item Developed EmoDynamiX: emotion- and discourse-aware strategy prediction; NAACL 2025 main conference, \textbf{oral presentation} \pubcite{wan2025emodynamix}.
 \end{itemize}
+\end{samepage}
 
+\clearpage
+\fontsize{9.5}{11.5}\selectfont
+\titlespacing*{\section}{0pt}{6pt}{5pt}
 \entry{Fudan University}{Mar 2023 -- Aug 2023}{Research Assistant}{Shanghai, China}
 \detail{Knowledge Works Lab; supervised by Prof. Zhixu Li.}
 \begin{itemize}
@@ -74,9 +75,9 @@ Prof. Chloé Clavel (ALMAnaCH, Inria Paris).}
 \begin{samepage}
 \noindent\begin{tabular*}{\linewidth}{@{}l@{\hspace{3mm}}p{\dimexpr\linewidth-33mm\relax}@{\extracolsep{\fill}}r@{}}
 \makebox[12mm][l]{\cvdate{2026}} & \textbf{Inria Paris Centre, Paris, France} & (Talk)\\[2pt]
-& \href{https://github.com/cw-wan/SELA/blob/main/SELA_EMNLP26_Slides.pdf}{\small Explainable Language-Guided Time Series Event Detection} & \\[7pt]
+& \href{https://github.com/cw-wan/SELA/blob/main/SELA_EMNLP26_Slides.pdf}{\fontsize{9.3}{11}\selectfont Explainable Multivariate Time Series Event Detection via Neuro-Symbolic VLM Agents} & \\[7pt]
 \makebox[12mm][l]{\cvdate{2025}} & \textbf{\href{https://2025.naacl.org/}{\color{ink}NAACL 2025}, Albuquerque, New Mexico, USA} & (Talk)\\[2pt]
-& \href{https://github.com/cw-wan/EmoDynamiX-v2/blob/master/Slides.pdf}{\small Strategy Planning in Empathetic Conversational Agents} &
+& \href{https://github.com/cw-wan/EmoDynamiX-v2/blob/master/Slides.pdf}{\fontsize{9.3}{11}\selectfont Emotion- and Discourse-Aware Strategy Prediction for Emotional Support Dialogue} &
 \end{tabular*}
 \end{samepage}
 
