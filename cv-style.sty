@@ -1,0 +1,109 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{cv-style}[2026/09/10 Quiet academic CV]
+\RequirePackage[a4paper,left=22mm,right=22mm,top=20mm,bottom=19mm,headheight=14pt,headsep=7mm,footskip=10mm]{geometry}
+\RequirePackage{fontspec}
+\setmainfont{Inter}[Path=fonts/,Extension=.ttf,UprightFont=*-Regular,RawFeature={-calt},BoldFont=*-SemiBold,ItalicFont=*-Italic,BoldItalicFont=*-SemiBoldItalic]
+\newfontfamily\displayfont{Newsreader-Medium.ttf}[Path=fonts/]
+\RequirePackage{xcolor}
+\definecolor{ink}{HTML}{202C3A}
+\definecolor{accent}{HTML}{24486B}
+\definecolor{heading}{HTML}{18324D}
+\definecolor{muted}{HTML}{66788A}
+\definecolor{hairline}{HTML}{D9E2EA}
+% Shared timestamp style: Inter Regular, 9 pt / 12 pt, muted blue-gray.
+\newcommand{\cvdate}[1]{{\normalfont\fontsize{9}{12}\selectfont\color{muted}#1}}
+\color{ink}
+\RequirePackage{enumitem}
+\RequirePackage{titlesec}
+\RequirePackage{fancyhdr}
+\RequirePackage{needspace}
+\RequirePackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=accent,linkcolor=accent,citecolor=accent,pdftitle={Chenwei (Sky) Wan | Curriculum Vitae},pdfauthor={Chenwei (Sky) Wan},pdfsubject={Research experience and publications},bookmarksopen=true}
+\urlstyle{same}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\fontsize{8}{10}\selectfont\color{muted}CHENWEI (SKY) WAN}
+\fancyhead[R]{\fontsize{8}{10}\selectfont\color{muted}CURRICULUM VITAE}
+\fancyfoot[L]{\cvdate{Nov. 2026}}
+\fancyfoot[R]{\fontsize{8}{10}\selectfont\color{muted}\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\AtBeginDocument{\fontsize{10.2}{12.8}\selectfont}
+\raggedright
+\setlength{\emergencystretch}{2em}
+\titleformat{\section}{\displayfont\fontsize{16}{18}\selectfont\color{heading}}{}{0pt}{}[\vspace{4pt}{\color{hairline}\titlerule[0.45pt]}]
+\titlespacing*{\section}{0pt}{10pt}{7pt}
+\setlist[itemize]{leftmargin=12pt,label=\textcolor{accent}{\textbullet},itemsep=1.5pt,topsep=3pt,parsep=0pt,partopsep=0pt}
+\newcommand{\entry}[4]{\Needspace{5\baselineskip}\vspace{5pt}{\bfseries\fontsize{11}{14}\selectfont #1}\hfill\cvdate{#2}\par\vspace{-1pt}{\color{ink}#3}\hfill{\fontsize{9}{12}\selectfont\color{muted}#4}\par}
+\newcommand{\detail}[1]{{\fontsize{9.3}{11}\selectfont\color{muted}#1\par}}
+\newcommand{\pubcite}[1]{\cite{#1}}
+\newcommand{\pubtitle}[2]{\if\relax\detokenize{#1}\relax{\color{ink}\bfseries #2}\else\href{#1}{\color{ink}\bfseries #2}\fi}
+\newcommand{\pubauthors}[1]{{\fontsize{9.5}{13}\selectfont #1}}
+\newcommand{\pubvenue}[1]{{\fontsize{9.5}{13}\selectfont\bfseries\color{accent}#1}}
+\newcommand{\pubnote}[1]{{\fontsize{9}{13}\selectfont\color{muted}#1}}
+\makeatletter
+\renewenvironment{thebibliography}[1]{%
+  \list{\@biblabel{\@arabic\c@enumiv}}{\settowidth\labelwidth{[c99]}\leftmargin\labelwidth\advance\leftmargin\labelsep\usecounter{enumiv}\setlength{\itemsep}{8pt}\setlength{\parsep}{2pt}\setlength{\topsep}{0pt}}%
+  \small\raggedright\clubpenalty=10000\widowpenalty=10000
+}{\endlist}
+\renewcommand{\@biblabel}[1]{{\fontsize{9}{12}\selectfont\color{muted}#1}}
+\makeatother
+
+\fancypagestyle{firstpage}{\fancyhead{}}
+
+% Semantic highlight tags. Default: deep navy; override color per .bib entry.
+\definecolor{oral}{HTML}{24486B}
+\definecolor{award}{HTML}{395A72}
+\definecolor{spotlight}{HTML}{39688A}
+\newcommand{\pubhighlight}[2][oral]{\begingroup\setlength{\fboxsep}{3.5pt}\colorbox{#1!12}{\fontsize{7.5}{9}\selectfont\bfseries\color{#1}\MakeUppercase{#2}}\endgroup}
+
+% Degree and discipline retain separate typographic roles.
+\newcommand{\degreefield}[2]{{\bfseries #1}\enspace{\color{muted}\textbar}\enspace{\itshape #2}}
+
+% Consecutive positions at one institution. The group stays together on a page.
+\RequirePackage{tikz}
+\newcounter{careerposition}
+\newlength{\careertextwidth}
+\newenvironment{positiongroup}[2]{%
+  \par\addvspace{7pt}\noindent\begin{minipage}{\linewidth}
+  {\bfseries\fontsize{11}{14}\selectfont #1}\hfill{\fontsize{9}{12}\selectfont\color{muted}#2}\par\vspace{6pt}
+  \setcounter{careerposition}{0}%
+  \setlength{\careertextwidth}{\dimexpr\linewidth-15pt\relax}%
+  \hspace*{2pt}\begin{tikzpicture}
+}{\end{tikzpicture}\end{minipage}\par\vspace{3pt}}
+\newcommand{\careerrole}[3]{%
+  \stepcounter{careerposition}%
+  \ifnum\value{careerposition}=1
+    \coordinate (careerstart) at (0,0);
+  \else
+    \coordinate (careerstart) at ([yshift=-9pt]careerprevious.south west);
+  \fi
+  \node[anchor=north west,inner sep=0pt,outer sep=0pt,text width=\careertextwidth] (careerrole\arabic{careerposition}) at (careerstart) {%
+    {\bfseries #1}\hfill\cvdate{#2}\par
+    #3};
+  \coordinate (careerdot\arabic{careerposition}) at ([xshift=-11pt,yshift=-5.5pt]careerrole\arabic{careerposition}.north west);
+  \ifnum\value{careerposition}>1
+    \draw[hairline,line width=1pt] (careerlastdot) -- (careerdot\arabic{careerposition});
+  \fi
+  \fill[accent!55] (careerdot\arabic{careerposition}) circle (2pt);
+  \coordinate (careerlastdot) at (careerdot\arabic{careerposition});
+  \node[inner sep=0pt,outer sep=0pt,anchor=north west,minimum width=0pt,minimum height=0pt] (careerprevious) at (careerrole\arabic{careerposition}.south west) {};
+}
+
+% School logos span the institution and degree lines only.
+\RequirePackage{graphicx}
+\newcommand{\educationentry}[6]{%
+  \par\addvspace{5pt}\noindent
+  \begin{minipage}[c]{9mm}
+    \includegraphics[width=9mm,height=9mm,keepaspectratio]{#1}
+  \end{minipage}\hspace{3mm}%
+  \begin{minipage}[c]{\dimexpr\linewidth-12mm\relax}
+    {\bfseries\fontsize{11}{14}\selectfont #2}\hfill\cvdate{#3}\par
+    {\color{ink}#4}\hfill{\fontsize{9}{12}\selectfont\color{muted}#5}\par
+  \end{minipage}\par\vspace{2pt}
+  \noindent\hspace*{12mm}\begin{minipage}{\dimexpr\linewidth-12mm\relax}
+    #6
+  \end{minipage}\par
+}
