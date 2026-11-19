@@ -176,7 +176,7 @@ Publication numbers increase with the `year` field within each type, across the 
 ## November 2026 CV update
 
 - Education logos are in `assets/`; the vector IP Paris source and PDF plus the Soochow PNG are included for compilation. The logos span only the institution and degree lines.
-- MSc: grade 18.0/20.0, Mention Très Bien (with highest honors); IP Paris PhD Track full tuition waiver (€14,000). BEng: grade 3.9/4.0, rank 1/79. These details come from the supplied education screenshot.
+- MSc: grade 18.0/20.0, Mention Très Bien (with highest honors); IP Paris PhD Track full tuition waiver (14k €). BEng: grade 3.9/4.0, rank 1/79. These details come from the supplied education screenshot; the waiver amount is presented as a rounded two-year figure using compact k/m notation at the user's request.
 - Talk labels use `(Talk)`. Journal reviewing precedes conference reviewing. TAFFC: since 2026; TASLP and conference reviewing: since 2025, as confirmed by the user.
 - Journal metrics: 2025 JIF 11.3 (TAFFC) and 5.2 (TASLP), published in June 2026. Source: IEEE Title List, September 2026, pages 2–3, https://open.ieee.org/wp-content/uploads/IEEE-Title-List-September-2026-CAPES.pdf (checked 18 November 2026). The source attributes TASLP metrics to its former IEEE/ACM title. Values in the CV link to this source.
 - Awards: Excellent Undergraduate Thesis, June 2023; Chu Ching-wen Scholarship, October 2022; The Top Prize Scholarship of Excellence, October 2022 and October 2020. Dates follow the supplied screenshot.
