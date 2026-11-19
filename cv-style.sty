@@ -41,9 +41,9 @@
 \newcommand{\entry}[4]{\Needspace{5\baselineskip}\vspace{5pt}{\bfseries\fontsize{11}{14}\selectfont #1}\hfill\cvdate{#2}\par\vspace{-1pt}\cvrole{#3}\hfill{\fontsize{9}{12}\selectfont\color{muted}#4}\par}
 \newcommand{\detail}[1]{{\fontsize{9.3}{11}\selectfont\color{muted}#1\par}}
 \newcommand{\pubcite}[1]{\cite{#1}}
-\newcommand{\pubtitle}[2]{\if\relax\detokenize{#1}\relax{\color{ink}\bfseries #2}\else\href{#1}{\color{ink}\bfseries #2}\fi}
+\newcommand{\pubtitle}[2]{\if\relax\detokenize{#1}\relax{\color{ink}\mdseries\itshape #2}\else\href{#1}{\color{ink}\mdseries\itshape #2}\fi}
 \newcommand{\pubauthors}[1]{{\fontsize{9.5}{13}\selectfont #1}}
-\newcommand{\pubvenue}[1]{{\fontsize{9.5}{13}\selectfont\bfseries\color{accent}#1}}
+\newcommand{\pubvenue}[1]{{\fontsize{9.5}{13}\selectfont\bfseries\itshape\color{accent}#1}}
 \newcommand{\pubnote}[1]{{\fontsize{9}{13}\selectfont\color{muted}#1}}
 \newcommand{\publicationlegend}{{\fontsize{9}{11}\selectfont\color{muted}%
   \mbox{C = Conference paper}\qquad\mbox{J = Journal paper}\qquad
@@ -64,10 +64,10 @@
 }{}
 \makeatletter
 \renewenvironment{thebibliography}[1]{%
-  \list{\@biblabel{\@arabic\c@enumiv}}{\settowidth\labelwidth{[C99]}\leftmargin\labelwidth\advance\leftmargin\labelsep\usecounter{enumiv}\setlength{\itemsep}{4pt}\setlength{\parsep}{2pt}\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}%
+  \list{\@biblabel{\@arabic\c@enumiv}}{\settowidth\labelwidth{C99.}\leftmargin\labelwidth\advance\leftmargin\labelsep\usecounter{enumiv}\setlength{\itemsep}{4pt}\setlength{\parsep}{2pt}\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}%
   \small\raggedright\clubpenalty=10000\widowpenalty=10000
 }{\endlist}
-\renewcommand{\@biblabel}[1]{{\fontsize{9}{12}\selectfont\color{muted}#1}}
+\renewcommand{\@biblabel}[1]{{\fontsize{9}{12}\selectfont\color{muted}#1.}}
 \makeatother
 
 \fancypagestyle{firstpage}{\fancyhead{}}

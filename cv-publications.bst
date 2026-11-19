@@ -61,10 +61,13 @@ FUNCTION {format.authors}
       ""
       { nameptr numnames > not }
       { namestr nameptr "{ff~}{vv~}{ll}{, jj}" format.name$ 'fullname :=
-        nameptr #1 > { ", " * } 'skip$ if$
+        nameptr #1 >
+          { nameptr numnames = { " \& " * } { ", " * } if$ }
+          'skip$
+        if$
         fullname is.owner
           { "\textbf{" * fullname * "}" * }
-          { fullname * }
+          { namestr nameptr "{vv~}{ll}{, f.}{, jj}" format.name$ * }
         if$
         "" 'authorsuffix :=
         is.equal.author { "*" 'authorsuffix := } 'skip$ if$
@@ -179,24 +182,36 @@ FUNCTION {assign.label}
 { number.entry prefix pubnumber * 'cvlabel := }
 FUNCTION {display.sort}
 { cvdisplaykey 'sort.key$ := }
+FUNCTION {format.venue}
+{ cvvenue empty$
+    { booktitle empty$ { journal empty$ { "" } { journal } if$ } { booktitle } if$ }
+    { "\mbox{" cvvenue * "}" * }
+  if$
+}
 FUNCTION {output.entry}
 { open.group
   "\bibitem[" write$ cvlabel write$ "]{" write$ cite$ write$ "}" write$ newline$
   "\begin{pubentry}{" write$ cvlead write$ "}" write$ newline$
-  "\pubtitle{" write$ url empty$ { "" } { url } if$ write$
-  "}{" write$ title write$ "}\par" write$ newline$
-  "\pubauthors{" write$ format.authors write$ "}\par" write$ newline$
-  "\pubvenue{" write$
-  cvvenue empty$
-    { booktitle empty$ { journal empty$ { "" } { journal } if$ } { booktitle } if$
-      write$ year empty$ 'skip$ { " (" write$ year write$ ")" write$ } if$
-    }
-    { cvvenue write$ }
+  author empty$ 'skip$
+    { "\pubauthors{" write$ format.authors add.period$ write$ "}\space" write$ newline$ }
   if$
-  "}" write$
+  title empty$ 'skip$
+    { "\pubtitle{" write$ url empty$ { "" } { url } if$ write$
+      "}{" write$ title write$ "}" write$ newline$
+    }
+  if$
+  format.venue duplicate$ empty$ 'pop$
+    { "in~\pubvenue{" write$ write$ "}" write$ }
+  if$
   type$ "patent" = number empty$ not and
     { "\enspace\textbullet\enspace Patent " write$ number write$ } 'skip$ if$
-  note empty$ 'skip$ { "\enspace\pubnote{\textbullet\enspace " write$ note write$ "}" write$ } if$
+  note empty$ 'skip$
+    { note "Long paper" = 'skip$
+        { "\enspace\pubnote{\textbullet\enspace " write$ note write$ "}" write$ }
+      if$
+    }
+  if$
+  "." write$
   cvhighlight empty$ 'skip$ { "\quad\pubhighlight[" write$ cvhighlightcolor empty$ { "oral" } { cvhighlightcolor } if$ write$ "]{" write$ cvhighlight write$ "}" write$ } if$
   newline$
   "\end{pubentry}" write$ newline$ newline$

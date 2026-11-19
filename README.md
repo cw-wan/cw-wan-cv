@@ -101,13 +101,13 @@ cvhighlight = {Oral},
 cvhighlightcolor = {oral},
 ```
 
-This produces a colored badge beside the venue line, independently of the authorship-based entry background. It can also contain `Spotlight`, `Best Paper`, or another verified distinction. Omit the field to remove the badge. The color and padding are controlled by `\pubhighlight` in `cv-style.sty`. EmoDynamiX uses this feature for its NAACL oral presentation.
+This produces a colored badge after the venue, independently of the authorship-based entry background. It can also contain `Spotlight`, `Best Paper`, or another verified distinction. Omit the field to remove the badge. The color and padding are controlled by `\pubhighlight` in `cv-style.sty`. EmoDynamiX uses this feature for its NAACL oral presentation.
 
-The optional `cvvenue` field controls the short venue displayed on the CV. Keep `booktitle` or `journal` for the full bibliographic venue name; that field is used when `cvvenue` is absent. Use concise labels without a year, such as `EMNLP Main`, `EMNLP Findings` and `NAACL Main`, because the publication year is already shown by the group heading. Retain the standard `year` field for grouping and numbering. The `note` field displays acceptance status, paper type or oral presentation.
+The optional `cvvenue` field controls the short venue displayed on the CV. Keep `booktitle` or `journal` for the full bibliographic venue name; that field is used when `cvvenue` is absent. Use concise labels without a year, such as `EMNLP Main`, `EMNLP Findings` and `NAACL Main`, because the publication year is already shown by the group heading. Retain the standard `year` field for grouping and numbering. The `note` field displays additional publication information; the repeated `Long paper` note is retained in the database but omitted from the CV.
 
 To reuse this project for another person, change the owner-name comparisons in `cv-publications.bst`; these control both name bolding and automatic entry highlighting.
 
-The publication list is deliberately a compact CV format: it does not print pages, publisher, DOI or abstracts, though these fields can remain in the database. Use a journal/conference bibliography style when reusing the database for a manuscript.
+The publication list follows the supplied reference format: `C2. Authors. Title in Venue.` Each entry is one continuous paragraph with natural line wrapping. The owner retains a full, bold name; other authors use surnames and given-name initials from the BibTeX record, with an ampersand before the last author. Titles are italic and linked; venues are semibold italic. Short venue labels stay together, and no trailing year is added. Display labels have a final period, while inline citations remain `[C2]`. Author-role markers, year groups, entry backgrounds and highlight badges are preserved. Pages, publisher, DOI and abstracts remain in the database but are not printed. Use a journal/conference bibliography style when reusing the database for a manuscript.
 
 ## Layout adjustments
 
@@ -148,7 +148,7 @@ Only use award labels when the distinction is confirmed. An omitted `cvhighlight
 
 ## Venue emphasis
 
-Venue names use deep navy semibold text, controlled by `\pubvenue`. Acceptance and paper-type notes use smaller neutral gray text, controlled by `\pubnote`. Publication highlights remain independent colored tags. Venue content still comes from `cvvenue` in the BibTeX database.
+Venue names use deep navy semibold italic text, controlled by `\pubvenue`. Additional notes use smaller neutral gray text, controlled by `\pubnote`. Publication highlights remain independent colored tags. Venue content still comes from `cvvenue` in the BibTeX database.
 
 ## Bibliography metadata and display labels
 
