@@ -121,12 +121,12 @@ Edit the `ink`, `accent`, `muted` and `hairline` colors in `cv-style.sty`; `pubs
 | Name | 34 / 39 | Newsreader name heading |
 | Section heading | 16 / 18 | Newsreader section headings on both pages |
 | Institution | 11 / 14 | `\cvinstitution`, semibold education/employment headings; the header subtitle uses regular weight |
-| Main content | 10.2 / 12.8 | `\cvbody`: summary, all experience descriptions, publication text, talk titles, reviewer venues and award titles |
-| Secondary content | 9.3 / 11 | `\cvsmall`: dates, locations, contact labels, explanatory notes, publication legend and labels, JIF annotations |
+| Main content | 10.2 / 12.8 | `\cvbody`: summary, all experience descriptions, publication text, talk event headings, reviewer venues and award titles |
+| Secondary content | 9.3 / 11 | `\cvsmall`: dates, locations, contact labels, explanatory notes, talk titles, publication legend and labels, JIF annotations |
 | Running header/page number | 8 / 10 | Page navigation only |
 | Highlight badge | 7.5 / 9 | Compact ORAL and similar badges |
 
-Role titles use the main-content size in italic. Paper titles use italic; venue names use semibold italic. Review journal/conference names use the main-content size and body color, with smaller dates and JIF annotations. Talk titles use the full width to the right of the year, so larger text is not constrained by a separate `(Talk)` column.
+Role titles use the main-content size in italic. Paper titles use italic; venue names use semibold italic. Review journal/conference names use the main-content size and body color, with smaller dates and JIF annotations. Talk titles use the annotation size (9.3 pt) and the full width to the right of the year; event headings remain at the main-content size.
 
 ## Prepare raster logos
 
@@ -192,16 +192,16 @@ Education uses `\degreefield{degree}{discipline}`: Inter semibold for the degree
 
 ## Consecutive positions
 
-Use `positiongroup` for consecutive appointments at the same institution, and `\careerrole{title}{dates}{description}` for each appointment. A shared institution heading with its location on the right and a subtle vertical timeline connect the roles, each retaining its own dates and linked publications. The group is kept on one page. Non-consecutive appointments (e.g. the SLB internship and subsequent doctorate) retain individual entries in chronological order. This component uses the standard `tikz` package.
+Use `\begin{positiongroup}{institution}{overall dates}` for consecutive appointments at the same institution, and `\careerrole{title}{dates}{location}{description}` for each appointment. The shared institution heading shows the overall employment span on the right, matching an ordinary entry's institution/date row. Each role shows its own dates in small upright parentheses after the title, with its own location at the right edge, preserving the ordinary role/location layout. Locations are specified per appointment even when they are the same. A subtle vertical timeline connects the roles, and the group is kept on one page. Non-consecutive appointments (e.g. the SLB internship and subsequent doctorate) retain individual entries in chronological order. This component uses the standard `tikz` package.
 
 All work-experience titles use the shared `\cvrole{...}` style: Inter Italic at regular weight, 10.2 pt with 12.8 pt line spacing. Both `\entry` and `\careerrole` use it; institution headings stay semibold, while dates and locations remain upright.
 
 The opening `\cvsummary{...}` and all experience bullet lists use `\cvbody`: Inter Regular, 10.2 pt with 12.8 pt line spacing, in the body color `ink`. This includes the Fudan entry on page two. Grouped positions explicitly use the same font and color inside TikZ, with normal font word spacing (`align=flush left`) and the document's 1 pt paragraph spacing restored after TikZ creates its minipage. The shared institution heading has a 2.5 pt gap before the first role, matching the ordinary entry's heading-to-role rhythm. Roles retain a 15 pt indent and the same right edge as other entries. The 6 pt separation between role boxes accounts for the restored paragraph/list spacing; outer spacing is 5 pt before and 1 pt after the group.
 
 ```tex
-\begin{positiongroup}{Institution}{Location}
-\careerrole{Most recent position}{Dates}{Description.}
-\careerrole{Earlier position}{Dates}{Description.}
+\begin{positiongroup}{Institution}{Overall dates}
+\careerrole{Most recent position}{Dates}{Location}{Description.}
+\careerrole{Earlier position}{Dates}{Location}{Description.}
 \end{positiongroup}
 ```
 

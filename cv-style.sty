@@ -92,12 +92,12 @@
 \newlength{\careertextwidth}
 \newenvironment{positiongroup}[2]{%
   \par\addvspace{5pt}\noindent\begin{minipage}{\linewidth}
-  \cvinstitution{#1}\hfill{\cvsmall\color{muted}#2}\par\vspace{2.5pt}
+  \cvinstitution{#1}\hfill\cvdate{#2}\par\vspace{2.5pt}
   \setcounter{careerposition}{0}%
   \setlength{\careertextwidth}{\dimexpr\linewidth-15pt\relax}%
   \hspace*{2pt}\begin{tikzpicture}
 }{\end{tikzpicture}\end{minipage}\par\vspace{1pt}}
-\newcommand{\careerrole}[3]{%
+\newcommand{\careerrole}[4]{%
   \stepcounter{careerposition}%
   \ifnum\value{careerposition}=1
     \coordinate (careerstart) at (0,0);
@@ -108,8 +108,8 @@
     font=\cvbody,text=ink,align=flush left] (careerrole\arabic{careerposition}) at (careerstart) {%
     % TikZ creates a minipage: restore the document's paragraph spacing here.
     \setlength{\parskip}{1pt}%
-    \cvrole{#1}\hfill\cvdate{#2}\par
-    #3};
+    \cvrole{#1}\enspace\cvdate{(#2)}\hfill{\cvsmall\color{muted}#3}\par
+    #4};
   \coordinate (careerdot\arabic{careerposition}) at ([xshift=-11pt,yshift=-5.5pt]careerrole\arabic{careerposition}.north west);
   \ifnum\value{careerposition}>1
     \draw[hairline,line width=1pt] (careerlastdot) -- (careerdot\arabic{careerposition});
