@@ -10,8 +10,13 @@
 \definecolor{heading}{HTML}{18324D}
 \definecolor{muted}{HTML}{66788A}
 \definecolor{hairline}{HTML}{D9E2EA}
-% Shared timestamp style: Inter Regular, 9 pt / 12 pt, muted blue-gray.
-\newcommand{\cvdate}[1]{{\normalfont\fontsize{9}{12}\selectfont\color{muted}#1}}
+% Shared summary/experience body typography, including text inside TikZ nodes.
+\newcommand{\cvbody}{\normalfont\fontsize{10.2}{12.8}\selectfont\color{ink}}
+\newcommand{\cvsmall}{\normalfont\fontsize{9.3}{11}\selectfont}
+\newcommand{\cvinstitution}[1]{{\normalfont\bfseries\fontsize{11}{14}\selectfont\color{ink}#1}}
+\newcommand{\cvsummary}[1]{{\cvbody #1\par}}
+% Shared secondary-text size; dates retain their muted blue-gray color.
+\newcommand{\cvdate}[1]{{\cvsmall\color{muted}#1}}
 \color{ink}
 \RequirePackage{enumitem}
 \RequirePackage{titlesec}
@@ -30,27 +35,27 @@
 \renewcommand{\footrulewidth}{0pt}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{1pt}
-\AtBeginDocument{\fontsize{10.2}{12.8}\selectfont}
+\AtBeginDocument{\cvbody}
 \raggedright
 \setlength{\emergencystretch}{2em}
 \titleformat{\section}{\displayfont\fontsize{16}{18}\selectfont\color{heading}}{}{0pt}{}[\vspace{4pt}{\color{hairline}\titlerule[0.45pt]}]
 \titlespacing*{\section}{0pt}{10pt}{7pt}
-\setlist[itemize]{leftmargin=12pt,label=\textcolor{accent}{\textbullet},itemsep=1.5pt,topsep=3pt,parsep=0pt,partopsep=0pt}
+\setlist[itemize]{leftmargin=12pt,label=\textcolor{accent}{\textbullet},itemsep=1.5pt,topsep=3pt,parsep=0pt,partopsep=0pt,before=\cvbody}
 % One role style for both individual appointments and grouped positions.
-\newcommand{\cvrole}[1]{{\mdseries\itshape\fontsize{10.2}{12.8}\selectfont\color{ink}#1}}
-\newcommand{\entry}[4]{\Needspace{5\baselineskip}\vspace{5pt}{\bfseries\fontsize{11}{14}\selectfont #1}\hfill\cvdate{#2}\par\vspace{-1pt}\cvrole{#3}\hfill{\fontsize{9}{12}\selectfont\color{muted}#4}\par}
-\newcommand{\detail}[1]{{\fontsize{9.3}{11}\selectfont\color{muted}#1\par}}
+\newcommand{\cvrole}[1]{{\cvbody\itshape #1}}
+\newcommand{\entry}[4]{\Needspace{5\baselineskip}\vspace{5pt}\cvinstitution{#1}\hfill\cvdate{#2}\par\vspace{-1pt}\cvrole{#3}\hfill{\cvsmall\color{muted}#4}\par}
+\newcommand{\detail}[1]{{\cvsmall\color{muted}#1\par}}
 \newcommand{\pubcite}[1]{\cite{#1}}
 \newcommand{\pubtitle}[2]{\if\relax\detokenize{#1}\relax{\color{ink}\mdseries\itshape #2}\else\href{#1}{\color{ink}\mdseries\itshape #2}\fi}
-\newcommand{\pubauthors}[1]{{\fontsize{9.5}{13}\selectfont #1}}
-\newcommand{\pubvenue}[1]{{\fontsize{9.5}{13}\selectfont\bfseries\itshape\color{accent}#1}}
-\newcommand{\pubnote}[1]{{\fontsize{9}{13}\selectfont\color{muted}#1}}
-\newcommand{\publicationlegend}{{\fontsize{9}{11}\selectfont\color{muted}%
+\newcommand{\pubauthors}[1]{{\cvbody #1}}
+\newcommand{\pubvenue}[1]{{\cvbody\bfseries\itshape\color{accent}#1}}
+\newcommand{\pubnote}[1]{{\cvsmall\color{muted}#1}}
+\newcommand{\publicationlegend}{{\cvsmall\color{muted}%
   \mbox{C = Conference paper}\qquad\mbox{J = Journal paper}\qquad
   \mbox{* = Equal contribution}\qquad
   \mbox{\textdagger{} = Corresponding author}\par}}
 \newcommand{\pubyear}[1]{\par\addvspace{5pt}\Needspace{6\baselineskip}%
-  {\fontsize{10}{12}\selectfont\bfseries\color{heading}#1\par}\nobreak\vspace{3pt}}
+  {\cvbody\bfseries\color{heading}#1\par}\nobreak\vspace{3pt}}
 \definecolor{pubshade}{HTML}{F0F4F8}
 % Keep each publication together; tint first- or equal-first-author entries.
 \NewDocumentEnvironment{pubentry}{m +b}{%
@@ -58,16 +63,16 @@
   \def\pubentrycolor{white}\ifnum#1=1\def\pubentrycolor{pubshade}\fi
   \noindent\hspace*{-3pt}\colorbox{\pubentrycolor}{%
     \begin{minipage}[t]{\dimexpr\linewidth-3pt\relax}%
-      \small\raggedright\setlength{\parskip}{2pt}#2\par
+      \noindent\cvbody\raggedright\setlength{\parskip}{2pt}#2\par
     \end{minipage}}\par
   \endgroup
 }{}
 \makeatletter
 \renewenvironment{thebibliography}[1]{%
   \list{\@biblabel{\@arabic\c@enumiv}}{\settowidth\labelwidth{C99.}\leftmargin\labelwidth\advance\leftmargin\labelsep\usecounter{enumiv}\setlength{\itemsep}{4pt}\setlength{\parsep}{2pt}\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}%
-  \small\raggedright\clubpenalty=10000\widowpenalty=10000
+  \cvbody\raggedright\clubpenalty=10000\widowpenalty=10000
 }{\endlist}
-\renewcommand{\@biblabel}[1]{{\fontsize{9}{12}\selectfont\color{muted}#1.}}
+\renewcommand{\@biblabel}[1]{{\cvsmall\color{muted}#1.}}
 \makeatother
 
 \fancypagestyle{firstpage}{\fancyhead{}}
@@ -86,20 +91,23 @@
 \newcounter{careerposition}
 \newlength{\careertextwidth}
 \newenvironment{positiongroup}[2]{%
-  \par\addvspace{7pt}\noindent\begin{minipage}{\linewidth}
-  {\bfseries\fontsize{11}{14}\selectfont #1}\hfill{\fontsize{9}{12}\selectfont\color{muted}#2}\par\vspace{6pt}
+  \par\addvspace{5pt}\noindent\begin{minipage}{\linewidth}
+  \cvinstitution{#1}\hfill{\cvsmall\color{muted}#2}\par\vspace{2.5pt}
   \setcounter{careerposition}{0}%
   \setlength{\careertextwidth}{\dimexpr\linewidth-15pt\relax}%
   \hspace*{2pt}\begin{tikzpicture}
-}{\end{tikzpicture}\end{minipage}\par\vspace{3pt}}
+}{\end{tikzpicture}\end{minipage}\par\vspace{1pt}}
 \newcommand{\careerrole}[3]{%
   \stepcounter{careerposition}%
   \ifnum\value{careerposition}=1
     \coordinate (careerstart) at (0,0);
   \else
-    \coordinate (careerstart) at ([yshift=-9pt]careerprevious.south west);
+    \coordinate (careerstart) at ([yshift=-6pt]careerprevious.south west);
   \fi
-  \node[anchor=north west,inner sep=0pt,outer sep=0pt,text width=\careertextwidth] (careerrole\arabic{careerposition}) at (careerstart) {%
+  \node[anchor=north west,inner sep=0pt,outer sep=0pt,text width=\careertextwidth,
+    font=\cvbody,text=ink,align=flush left] (careerrole\arabic{careerposition}) at (careerstart) {%
+    % TikZ creates a minipage: restore the document's paragraph spacing here.
+    \setlength{\parskip}{1pt}%
     \cvrole{#1}\hfill\cvdate{#2}\par
     #3};
   \coordinate (careerdot\arabic{careerposition}) at ([xshift=-11pt,yshift=-5.5pt]careerrole\arabic{careerposition}.north west);
@@ -127,8 +135,8 @@
     \includegraphics[width=9mm,height=9mm,keepaspectratio]{#1}
   \end{minipage}\hspace{3mm}%
   \begin{minipage}[c]{\dimexpr\linewidth-12mm\relax}
-    {\bfseries\fontsize{11}{14}\selectfont #2}\hfill\cvdate{#3}\par
-    {\color{ink}#4}\hfill{\fontsize{9}{12}\selectfont\color{muted}#5}\par
+    \cvinstitution{#2}\hfill\cvdate{#3}\par
+    {\color{ink}#4}\hfill{\cvsmall\color{muted}#5}\par
   \end{minipage}\par\vspace{2pt}
   \noindent\hspace*{12mm}\begin{minipage}{\dimexpr\linewidth-12mm\relax}
     #6

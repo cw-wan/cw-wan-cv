@@ -112,7 +112,21 @@ The publication list follows the supplied reference format: `C2. Authors. Title 
 
 ## Layout adjustments
 
-Edit the `ink`, `accent`, `muted` and `hairline` colors in `cv-style.sty`; `pubshade` controls the first- and equal-first-author entry background. Body font and leading are set in `\AtBeginDocument`; section spacing and entry spacing are also centralized there. The first page includes the complete Inria experience, with an explicit page break before Fudan University. The Inria supervisor line wraps naturally instead of forcing an extra line. Publication entries stay together on one page. As experience grows, revisit the page break and allow additional pages rather than shrinking text excessively. The footer date is intentionally fixed and should be updated when revising the CV.
+Edit the `ink`, `accent`, `muted` and `hairline` colors in `cv-style.sty`; `pubshade` controls the first- and equal-first-author entry background. Body font and leading are defined by `\cvbody`, applied at the start of the document and explicitly inside components. Section spacing is the same on both pages; no page-wide font reduction is applied. The first page includes the complete Inria experience, with an explicit page break before Fudan University. The Inria supervisor line wraps naturally instead of forcing an extra line. Publication entries stay together on one page. As experience grows, revisit the page break and allow additional pages rather than shrinking text excessively. The footer date is intentionally fixed and should be updated when revising the CV.
+
+### Typography standard
+
+| Level | Font size / line spacing (TeX pt) | Application |
+| --- | --- | --- |
+| Name | 34 / 39 | Newsreader name heading |
+| Section heading | 16 / 18 | Newsreader section headings on both pages |
+| Institution | 11 / 14 | `\cvinstitution`, semibold education/employment headings; the header subtitle uses regular weight |
+| Main content | 10.2 / 12.8 | `\cvbody`: summary, all experience descriptions, publication text, talk titles, reviewer venues and award titles |
+| Secondary content | 9.3 / 11 | `\cvsmall`: dates, locations, contact labels, explanatory notes, publication legend and labels, JIF annotations |
+| Running header/page number | 8 / 10 | Page navigation only |
+| Highlight badge | 7.5 / 9 | Compact ORAL and similar badges |
+
+Role titles use the main-content size in italic. Paper titles use italic; venue names use semibold italic. Review journal/conference names use the main-content size and body color, with smaller dates and JIF annotations. Talk titles use the full width to the right of the year, so larger text is not constrained by a separate `(Talk)` column.
 
 ## Prepare raster logos
 
@@ -182,6 +196,8 @@ Use `positiongroup` for consecutive appointments at the same institution, and `\
 
 All work-experience titles use the shared `\cvrole{...}` style: Inter Italic at regular weight, 10.2 pt with 12.8 pt line spacing. Both `\entry` and `\careerrole` use it; institution headings stay semibold, while dates and locations remain upright.
 
+The opening `\cvsummary{...}` and all experience bullet lists use `\cvbody`: Inter Regular, 10.2 pt with 12.8 pt line spacing, in the body color `ink`. This includes the Fudan entry on page two. Grouped positions explicitly use the same font and color inside TikZ, with normal font word spacing (`align=flush left`) and the document's 1 pt paragraph spacing restored after TikZ creates its minipage. The shared institution heading has a 2.5 pt gap before the first role, matching the ordinary entry's heading-to-role rhythm. Roles retain a 15 pt indent and the same right edge as other entries. The 6 pt separation between role boxes accounts for the restored paragraph/list spacing; outer spacing is 5 pt before and 1 pt after the group.
+
 ```tex
 \begin{positiongroup}{Institution}{Location}
 \careerrole{Most recent position}{Dates}{Description.}
@@ -219,7 +235,7 @@ The contact row pairs location, email, LinkedIn, Google Scholar and GitHub label
 
 ## Unified date typography
 
-Standalone dates in education, experience (including grouped roles), talks, reviewing, awards and the footer use `\cvdate{...}`, defined once in `cv-style.sty`: Inter Regular, 9 pt with 12 pt line spacing, muted blue-gray (#66788A). Change this macro to update those dates throughout the CV. Publication year group headings and JIF metric years use their surrounding text style.
+Standalone dates in education, experience (including grouped roles), talks, reviewing, awards and the footer use `\cvdate{...}`, defined once in `cv-style.sty`: Inter Regular, 9.3 pt with 11 pt line spacing, muted blue-gray (#66788A). This uses the shared secondary-text size `\cvsmall`. Publication year group headings use the main-content size; JIF annotations use the secondary-text size.
 
 
 ## Education clarification
