@@ -1,247 +1,253 @@
 # Chenwei (Sky) Wan — LaTeX CV
 
-A two-page research CV with a quiet editorial layout: Newsreader display type, Inter body text, deep navy accents, linked publication references and a single BibTeX database.
+A research CV with a restrained editorial layout: Newsreader for the name and section headings, Inter for readable content, and navy accents for hierarchy and navigation. The current [PDF](main.pdf) is two pages.
 
-## Compile
+This document describes the current design and how to maintain it. CV content lives in [main.tex](main.tex); publication metadata lives in [publications.bib](publications.bib).
 
-### Overleaf
+- [Design principles and structure](#design-principles-and-structure)
+- [Global design system](#global-design-system)
+- [Section and component patterns](#section-and-component-patterns)
+- [Publication data and numbering](#publication-data-and-numbering)
+- [Build](#build)
+- [Maintenance and assets](#maintenance-and-assets)
 
-1. Upload the ZIP as a new project.
-2. Set the main document to `main.tex`.
-3. In project settings, select **XeLaTeX**.
-4. Recompile. Overleaf runs BibTeX automatically when needed.
+## Design principles and structure
 
-Fonts are bundled under `fonts/`; no external fonts or web requests are needed.
+The layout uses a small set of shared styles so similar information looks consistent across sections. Institution names establish hierarchy; role and paper titles use italic; dates and supporting notes have a quieter secondary style. Substantive information stays at the body size, including education details, publication text and reviewer venues.
 
-### Local TeX Live / MiKTeX
+The section order presents qualifications and research output before the work that supports them:
+
+| Order | Section | Purpose |
+| --- | --- | --- |
+| 1 | Education | Degrees, academic performance and funding |
+| 2 | Publications | Research output, authorship and presentation distinctions |
+| 3 | Professional Experience | Appointments, responsibilities and research contributions |
+| 4 | Invited Talks | Presentations, hosts, dates and talk types |
+| 5 | Academic Service | Journal and conference reviewing |
+| 6 | Honors & Awards | Recognition and awarding institution |
+
+An identity block and research summary precede these sections. Entries generally run from newest to oldest. Publications have separate chronological numbering rules, described below.
+
+Content, presentation and bibliography formatting have separate responsibilities:
+
+| File or directory | Responsibility |
+| --- | --- |
+| [main.tex](main.tex) | Identity, summary, section order, education, experience, talks, service and awards |
+| [cv-style.sty](cv-style.sty) | Shared typography, colors, spacing, pagination and reusable components |
+| [publications.bib](publications.bib) | Bibliographic records and CV-specific publication fields |
+| [cv-publications.bst](cv-publications.bst) | Publication formatting, year groups, labels, author markers and highlighting |
+| [.latexmkrc](.latexmkrc) | XeLaTeX build configuration |
+| [fonts/](fonts/) | Bundled Inter and Newsreader fonts with SIL Open Font Licenses |
+| [assets/](assets/) | University logos and vector contact icons |
+| [scripts/prepare_logo.py](scripts/prepare_logo.py) | Optional raster-logo preparation utility |
+| [main.pdf](main.pdf) | Tracked, compiled CV |
+
+## Global design system
+
+### Typography and emphasis
+
+All sizes below are TeX points, expressed as font size / line spacing. Inter uses actual regular, semibold, italic and semibold-italic font files; Newsreader supplies the display style.
+
+| Level | Size / spacing | Application |
+| --- | --- | --- |
+| Name | 34 / 39 | Newsreader, main identity heading |
+| Section heading | 16 / 18 | Newsreader, with a pale rule below |
+| Institution | 11 / 14 | Inter semibold, `\cvinstitution`; the identity subtitle uses the same size in regular weight |
+| Body | 10.2 / 12.8 | `\cvbody`: summary, degrees, education details, experience, publications, talks, reviewer venues and award titles |
+| Secondary | 9.3 / 11 | `\cvsmall`: contact labels, dates, locations, supervisor/lab notes, award institutions, publication legend/labels and JIF annotations |
+| Running header and page number | 8 / 10 | Page navigation |
+| Publication distinction badge | 7.5 / 9 | Compact ORAL and similar tags |
+
+`\cvrole` gives all experience titles the body size in regular-weight italic. Paper and talk titles also use body-size italic; publication venues use semibold italic. Talk type badges use the body size, making them more prominent than publication distinction badges. `\cvdate` applies the secondary size and muted color consistently to standalone dates, including the footer.
+
+### Color and links
+
+| Token | Color | Role |
+| --- | --- | --- |
+| `ink` | `#202C3A` | Body text and institution headings |
+| `heading` | `#18324D` | Name, section headings and publication years |
+| `accent` | `#24486B` | Links, bullets, publication venues and talk labels |
+| `muted` | `#66788A` | Dates, locations and supporting notes |
+| `hairline` | `#D9E2EA` | Section rules and grouped-position connectors |
+| `pubshade` | `#F0F4F8` | First- and equal-first-author publication backgrounds |
+
+Links are clickable text without visible borders. Paper titles retain the body color even when linked. Experience institutions and talk hosts likewise retain their heading color through `\href{url}{\color{ink}Name}`. Linked talk titles and JIF annotations use the accent color. University logos retain their original colors; contact icon PDFs have their own navy fill and need asset recoloring if the palette changes.
+
+### Page geometry and adaptive whitespace
+
+The A4 text area has 22 mm left/right margins, an 18 mm base top margin and a 17.5 mm bottom margin. The footer skip is 9 mm. The first page starts with the name; subsequent pages have a small running header. The footer shows the revision month at left and the page number at right. Its month is set explicitly in `cv-style.sty`.
+
+The first page balances spare space above and below its content. **After LaTeX selects the page break**, the output hook measures the natural content height and adds this space above the name:
+
+```text
+extra top space = max(0, min(8 mm, 60% of unused page height))
+```
+
+The cap is `\cvheadroomlimit`. The effective first-page top margin therefore ranges from 18 to 26 mm and tightens automatically as content grows. The remaining slack stays at the bottom. This output-stage adjustment preserves internal spacing, footer placement and page-break selection; later pages use the base layout.
+
+Pagination is automatic. Each publication, talk and consecutive-position group stays together. Ordinary experience headings reserve room for following content using `\Needspace`; the Inria experience also has an explicit `samepage` wrapper. With the current content, page one ends after the current CIFRE role and page two starts with the Télécom Paris group. These are layout outcomes, not fixed page breaks. As the CV grows, allow additional pages rather than reducing the body size.
+
+### Alignment and spacing
+
+Substantive paragraphs use justified alignment with English hyphenation. `\cvjustify` restores normal line-breaking rules inside minipages and TikZ nodes and allows 1 em of emergency stretch. First-line indentation is zero, default paragraph spacing is 1 pt, and final lines keep their natural length. Publication entries and lists set their own local paragraph spacing.
+
+Institution/date and role/location rows share the same right edge. Section headings have 8 pt before and 7 pt after; their 0.45 pt rule sits below the title. The shared `itemize` style uses navy bullets, a 12 pt left margin, 1.5 pt between items and 3 pt above/below the list. Components reuse these styles rather than setting smaller text to fit.
+
+Dates use compact forms such as `Sep 2026 -- Present`; talks use `D Mon YYYY`. Monetary amounts use compact k/m notation with a nonbreaking space before the currency, for example `14k~€`.
+
+## Section and component patterns
+
+### Identity and summary
+
+The header stacks the name, professional subtitle and contact row. Vertical skips of 4 pt, 5 pt and 8 pt separate the name/subtitle, subtitle/contacts and contacts/summary respectively, in addition to normal paragraph spacing. Adaptive whitespace is added above the entire block.
+
+`\contactitem{icon-name}{label}` pairs each label with a vector icon. `\contactsep` inserts 13 pt of whitespace between items. Wrap an item in `\href` to make both icon and label clickable. The current row contains location, email, LinkedIn, Google Scholar and GitHub. Icons and labels stay together. The research summary uses `\cvsummary{...}` and the standard body typography.
+
+### Education
+
+```tex
+\educationentry{logo}{institution}{dates}
+  {\degreefield{degree}{discipline}}{location}{details}
+```
+
+A 9 mm logo box and 3 mm gutter establish a text column inset by 12 mm. The logo spans the institution and degree rows. The first row pairs the institution with dates; the second pairs the degree and discipline with location. `\degreefield` uses a semibold degree, a light vertical bar and an italic discipline.
+
+Details sit below in the same text column and use the shared body-size bullet list. Grades, rankings, funding and doctoral collaboration information are substantive content. Their bullets and list spacing match experience descriptions; dates and locations retain the secondary style.
+
+### Publications
+
+The bibliography generates one **Publications** section with descending year groups. The legend defines C, J, `*` and `†`, separated by generous whitespace. Each entry follows this pattern:
+
+```text
+C2. Authors. Paper title
+    In Venue. [optional distinction badge]
+```
+
+Authors and title flow together with natural wrapping. The owner name is full and semibold; other authors use surnames and initials, with an ampersand before the final author. Titles are italic and link to the record's `url`. `In Venue.` starts a new line; the short venue is semibold italic and omits the year because the year group already supplies it.
+
+A pale background identifies first- and equal-first-author papers. Distinctions such as ORAL use a separate compact badge after the venue, separated by one nonbreaking space. Publication entries have 4 pt list spacing and 3 pt background padding. The publication label remains outside the shaded text block.
+
+### Professional experience
+
+```tex
+\entry{institution}{dates}{role}{location}
+\detail{Lab and/or supervisors.}
+\begin{itemize}
+  \item Research contribution or responsibility.
+\end{itemize}
+```
+
+Ordinary appointments pair a semibold institution with dates on the first row and an italic role with location on the second. Dates and locations remain upright in the secondary style. Lab and supervisor notes use `\detail`; contributions use body-size bullets. Current responsibilities use present-tense verbs, completed roles use past tense, and paper references use `\pubcite{key}`.
+
+Consecutive appointments at one institution share an institution heading and overall date span:
+
+```tex
+\begin{positiongroup}{Institution}{Overall dates}
+  \careerrole{Most recent role}{Role dates}{Location}{%
+    \begin{itemize}
+      \item Contribution.
+    \end{itemize}}
+  \careerrole{Earlier role}{Role dates}{Location}{Description.}
+\end{positiongroup}
+```
+
+Each role retains its own location on the right and dates in small upright parentheses after its title. A subtle timeline connects the roles within a 15 pt inset. The shared heading has a 2.5 pt gap before the first role; role boxes are separated by 6 pt. The TikZ component restores the same body typography, justification and paragraph spacing as ordinary entries. The whole group stays on one page. Non-consecutive appointments at the same employer remain separate chronological entries.
+
+### Invited talks
+
+```tex
+\talkentry{host and location}{date}{type}{title}
+```
+
+The first row pairs a semibold host/location with a right-aligned full date. The second row reserves `\linewidth - 28mm` for the italic title, followed by a 3 mm gutter and a 25 mm right-aligned type column. With the current margins, the title column is 138 mm wide. Long titles wrap within their own column.
+
+Type labels have a pale blue background and no parentheses. The current Seminar label is semibold through `\textbf{Seminar}`; Talk labels are regular weight. Both use the body size. Entries have 4 pt separation and stay together across page breaks.
+
+Use full paper titles for paper presentations and the event title for standalone seminars. Hosts link to official websites; titles link to slides when a URL is available. A title without slides remains plain text.
+
+### Academic service and honors
+
+Academic Service places journal reviewing before conference reviewing. Reviewer category headings are semibold; venue names use the standard body size and color. Journal JIF annotations are smaller, linked to their source and kept on the venue line. Service start dates align at the right edge.
+
+Honors & Awards pairs each semibold award title with its date, followed by the awarding institution in `\detail`. Entries have 4 pt separation. Multiple instances of the same award can share one title with semicolon-separated dates.
+
+## Publication data and numbering
+
+Maintain standard metadata in `publications.bib`, preserving the published title and author order. For ACL-family records, import the ACL Anthology BibTeX and maintain CV-specific display fields separately. Full proceedings names, DOI, pages and other metadata remain available in the database even when the compact CV does not print them.
+
+| CV field | Meaning |
+| --- | --- |
+| `cvvenue` | Short venue without a year, e.g. `EMNLP Main`; falls back to `booktitle`, then `journal` |
+| `cvequal` | Comma-separated, one-based author positions receiving `*`, e.g. `{1,2}` |
+| `cvcorresponding` | One-based author positions receiving `†`, e.g. `{3}` |
+| `cvhighlight` | Distinction badge text, automatically uppercased, e.g. `{Oral}` |
+| `cvhighlightcolor` | Named LaTeX color; defaults to `oral`, with `award` and `spotlight` also defined |
+
+Author positions refer to the standard `author` field. Keep contribution markers out of author names and update the position fields if author order changes. Declare equal contribution only when established; an internship footnote does not imply equal contribution. The current Findings record marks author 3 as corresponding author. Shading is automatic when the owner is first author or included in `cvequal`.
+
+The owner-name matcher in `cv-publications.bst` recognizes Chenwei Wan and Sky Chenwei Wan. Change it when adapting the template to another person. The standard `note` field is displayed as a secondary note except for the redundant value `Long paper`, which is suppressed.
+
+To add a paper:
+
+1. Add its BibTeX record and applicable CV fields to `publications.bib`.
+2. Add the key to the explicit `\nocite{...}` list at the start of `main.tex`. This list controls the order within each year.
+3. Use `\pubcite{key}` for linked references from experience descriptions.
+4. Rebuild with BibTeX so labels and citations update together.
+
+Display order and numbering are independent: years display newest first, while numbers increase from older to newer papers within each type. Use a four-digit `year`; entries without one appear last under **Undated**. Equal-year ties follow the `\nocite` order. Counters continue across year groups.
+
+| BibTeX type | Label prefix |
+| --- | --- |
+| `inproceedings`, `conference` | C |
+| `article` | J |
+| `patent` | P |
+| `book`, `incollection` | B |
+| Other supported entries | O |
+
+The current display is C2 and C3 under 2026, followed by C1 under 2025. Printed entry labels end in a period; inline citations use brackets, such as `[C2]`. The visible legend currently explains C and J; extend it if other publication types are added.
+
+## Build
+
+Use **XeLaTeX and BibTeX**. Run from the repository root:
+
+```sh
+xelatex -interaction=nonstopmode -halt-on-error main.tex
+bibtex main
+xelatex -interaction=nonstopmode -halt-on-error main.tex
+xelatex -interaction=nonstopmode -halt-on-error main.tex
+```
+
+With `latexmk` installed, the equivalent command is:
 
 ```sh
 latexmk -xelatex main.tex
 ```
 
-Or run manually:
+On Overleaf, import the project, select `main.tex` as the main document and choose XeLaTeX. Overleaf runs BibTeX as needed. Fonts and ready-to-use graphics are bundled; compilation needs no external font service or SVG conversion.
 
-```sh
-xelatex main.tex
-bibtex main
-xelatex main.tex
-xelatex main.tex
-```
+Required packages are `geometry`, `fontspec`, `babel` with English, `ragged2e`, `xcolor`, `enumitem`, `titlesec`, `fancyhdr`, `needspace`, `hyperref`, `tikz` and `graphicx`. LaTeX intermediates and local `tmp/` and `output/` directories are ignored; `main.pdf` is tracked.
 
-Uses BibTeX, not Biber. Required standard packages: geometry, fontspec, babel (English), ragged2e, xcolor, enumitem, titlesec, fancyhdr, needspace, hyperref, tikz and graphicx. Validated with XeLaTeX and BibTeX from TeX Live 2023 and MiKTeX 25.4.
+## Maintenance and assets
 
-## Project files
+Edit shared rules in `cv-style.sty` and content in `main.tex`, using the existing components. Update publication metadata in `publications.bib` and rendering logic in `cv-publications.bst`; the `.bbl` file is generated and should not be edited directly. Keep this README aligned with the resulting design; Git history records past iterations.
 
-- `main.tex`: CV content, section order and experience-to-paper citations.
-- `cv-style.sty`: typography, colors, margins, spacing and reusable entry commands.
-- `publications.bib`: publication metadata; edit this to maintain publications.
-- `cv-publications.bst`: custom BibTeX display style, year grouping, type-based labels, author-role markers and entry highlighting.
-- `.latexmkrc`: compilation settings.
-- `fonts/`: bundled static Newsreader and Inter fonts and their SIL Open Font Licenses.
-- `assets/icons/`: Font Awesome contact icons, original SVGs, vector PDFs and license/source notes.
-- `scripts/prepare_logo.py`: optional raster-logo trimming and square-canvas utility.
-- `main.pdf`: compiled preview.
+For content or layout changes, rebuild, inspect every rendered page and check for overflow, awkward breaks, stranded headings and misplaced links. Check the log for unresolved references and layout warnings, then refresh the tracked `main.pdf`. Update the footer month and time-dependent annotations when revising those details.
 
-## Cite a publication inside an experience
+### Logos
 
-```tex
-Two long papers accepted to EMNLP 2026:
-main conference \pubcite{wan2026grammar} and
-Findings \pubcite{hou2026grounding}.
-```
-
-These references render as `[C2]` and `[C3]` and link to the corresponding publication. Each bibliography title links to the paper when the entry has a `url` field. There is no fabricated link for entries without a public URL.
-
-## Add or update papers
-
-1. Add a normal BibTeX entry to `publications.bib`, preserving the published title, author order and standard metadata. For ACL-family papers, use the ACL Anthology BibTeX record.
-2. Add its key to the `\nocite{...}` list near the top of `main.tex`. Papers are grouped by year in descending order; papers from the same year follow this list.
-3. Use `\pubcite{your-key}` wherever the work is relevant.
-4. Set the short `cvvenue` label and any verified author-role or presentation fields described below.
-5. Recompile with BibTeX. Labels renumber automatically by publication type across all years, and citations stay synchronized.
-
-### Year grouping and numbering
-
-All papers appear in a single **Publications** section, grouped by year from newest to oldest. Its legend reads **C = Conference paper; J = Journal paper; * = Equal contribution; † = Corresponding author**. Within a year, the display order follows `\nocite`.
-
-Numbering is independent of display order: earlier years receive smaller numbers within each publication type, and equal-year entries follow `\nocite` order. Labels use uppercase letters:
-
-| BibTeX entry type | Label |
-| --- | --- |
-| `@inproceedings`, `@conference` | `C1`, `C2`, … |
-| `@article` | `J1`, `J2`, … |
-| `@patent` | `P1`, `P2`, … |
-| `@book`, `@incollection` | `B1`, `B2`, … |
-| Other supported entries | `O1`, `O2`, … |
-
-Each type has its own counter, which continues across all year groups. Patents may use the `number` field for the patent identifier and `cvvenue` for the patent office/jurisdiction; their number is printed automatically. The current database contains no patents and does not invent any.
-
-### Author roles and entry highlighting
-
-Keep the standard `author` field in its published order, without inserting `*` or `†` into names. The style bolds `Chenwei Wan` and `Sky Chenwei Wan` automatically; the CV heading and PDF metadata use **Chenwei (Sky) Wan**.
-
-Declare verified author roles with comma-separated, one-based author positions:
-
-```bibtex
-cvequal = {1,2},
-cvcorresponding = {3},
-```
-
-In this example, the first and second authors receive `*` for equal contribution, and the third author receives `†` for corresponding authorship. Positions always refer to the order in the standard `author` field; update these fields if that order changes. Omit a field when that role is not established.
-
-An entry receives a pale background when Chenwei Wan / Sky Chenwei Wan is its first author or is included in `cvequal`. The legacy `cvselected = {true}` field remains available for manual entry highlighting, but does not itself declare equal contribution or add an author marker. Prefer `cvequal` for a verified co-first-author contribution.
-
-The current EMNLP Findings entry uses `cvcorresponding = {3}` to mark Sky Chenwei Wan as the corresponding author, per the user's confirmation. The asterisk attached to Yifei Wang in the EMNLP Main paper describes work done during an internship; it is **not** an equal-contribution marker. No unverified equal-contribution marks are added to the current entries.
-
-### Per-paper highlights
-
-Add a highlight to any entry in `publications.bib`:
-
-```bibtex
-cvhighlight = {Oral},
-cvhighlightcolor = {oral},
-```
-
-This produces a colored badge after the venue, independently of the authorship-based entry background. It can also contain `Spotlight`, `Best Paper`, or another verified distinction. Omit the field to remove the badge. The color and padding are controlled by `\pubhighlight` in `cv-style.sty`. EmoDynamiX uses this feature for its NAACL oral presentation.
-
-The optional `cvvenue` field controls the short venue displayed on the CV. Keep `booktitle` or `journal` for the full bibliographic venue name; that field is used when `cvvenue` is absent. Use concise labels without a year, such as `EMNLP Main`, `EMNLP Findings` and `NAACL Main`, because the publication year is already shown by the group heading. Retain the standard `year` field for grouping and numbering. The `note` field displays additional publication information; the repeated `Long paper` note is retained in the database but omitted from the CV.
-
-To reuse this project for another person, change the owner-name comparisons in `cv-publications.bst`; these control both name bolding and automatic entry highlighting.
-
-The publication list starts each entry with `C2. Authors. Title`, allowing natural line wrapping, then places `In Venue.` on a new line with the same body line spacing. The owner retains a full, bold name; other authors use surnames and given-name initials from the BibTeX record, with an ampersand before the last author. Titles are italic and linked; venues are semibold italic. Short venue labels stay together, and no trailing year is added. Display labels have a final period, while inline citations remain `[C2]`. Author-role markers, year groups, entry backgrounds and highlight badges are preserved. Pages, publisher, DOI and abstracts remain in the database but are not printed. Use a journal/conference bibliography style when reusing the database for a manuscript.
-
-## Layout adjustments
-
-Edit the `ink`, `accent`, `muted` and `hairline` colors in `cv-style.sty`; `pubshade` controls the first- and equal-first-author entry background. Body font and leading are defined by `\cvbody`, applied at the start of the document and explicitly inside components. Section spacing is the same on both pages (8 pt before, 7 pt after); no page-wide font reduction is applied. Page margins are 22 mm left/right, 18 mm top and 17.5 mm bottom, with a 9 mm footer skip. The first page includes Education, all Publications and the complete current CIFRE experience; the second page starts with the consecutive Télécom Paris positions. Pagination is automatic, with publication entries and grouped positions kept together. The Inria supervisor line wraps naturally instead of forcing an extra line. As experience grows, review pagination and allow additional pages rather than shrinking text excessively. The footer date is intentionally fixed and should be updated when revising the CV.
-
-The first page has adaptive top whitespace above the name. After LaTeX chooses the page break, the style measures the natural page content and moves 60% of the remaining vertical space to the top, capped at 8 mm (`\cvheadroomlimit`). Thus the effective first-page top margin ranges from 18 to 26 mm and automatically tightens as content grows. The remaining space stays below the content; internal spacing, footer position and later pages retain their normal layout. This adjustment runs during output, rather than adding stretchable space to the document flow, so it does not influence page-break selection.
-
-Paragraphs in the summary, experience descriptions, publications and talk titles use justified alignment with automatic English hyphenation. The shared `\cvjustify` restores normal line-breaking rules inside minipages and TikZ nodes, with 1 em emergency stretch. `\JustifyingParindent` is explicitly zero; final lines retain their natural length. Institution/date rows, short labels and centered logos keep their existing alignment.
-
-### Typography standard
-
-| Level | Font size / line spacing (TeX pt) | Application |
-| --- | --- | --- |
-| Name | 34 / 39 | Newsreader name heading |
-| Section heading | 16 / 18 | Newsreader section headings on both pages |
-| Institution | 11 / 14 | `\cvinstitution`, semibold education/employment headings; the header subtitle uses regular weight |
-| Main content | 10.2 / 12.8 | `\cvbody`: summary, education details, all experience descriptions, publication text, talk event headings/titles/type labels, reviewer venues and award titles |
-| Secondary content | 9.3 / 11 | `\cvsmall`: dates, locations, contact labels, experience/award notes, publication legend and labels, JIF annotations |
-| Running header/page number | 8 / 10 | Page navigation only |
-| Highlight badge | 7.5 / 9 | Compact ORAL and similar badges |
-
-Role titles use the main-content size in italic. Paper titles use italic; venue names use semibold italic. Review journal/conference names use the main-content size and body color, with smaller dates and JIF annotations. Talk titles also use the main-content size in italic (10.2/12.8 pt). `\talkentry{host and location}{date}{type}{title}` puts the host at the left and the complete date at the right, following the experience layout. Beneath that row, the full title occupies the left 138 mm; the right 25 mm holds the type label in a pale blue box, separated by a 3 mm gutter. Dates use `D Mon YYYY`; reports have 4 pt spacing. Institution names in Professional Experience and Invited Talks link to their official websites while retaining the heading color.
-
-## Prepare raster logos
-
-The original `assets/soochow.png` is preserved. Its 328 x 309 canvas contains 9 px of transparent space on the left and 11 px on the right, making the visible seal smaller than the IP Paris logo. The CV now uses `assets/soochow-trimmed.png`: the 308 x 304 artwork is centered on a transparent 308 x 308 square without scaling or distortion. School logos are centered in the same 9 mm box. IP Paris already fills its canvas and keeps its original vector PDF.
-
-To regenerate the prepared PNG:
+Both university marks fit the same 9 mm box. IP Paris uses its vector PDF; Soochow uses a prepared PNG with excess canvas removed. Normalize visible artwork before comparing display sizes, keeping the source image and aspect ratio intact.
 
 ```sh
 python -m pip install -r scripts/requirements.txt
 python scripts/prepare_logo.py assets/soochow.png assets/soochow-trimmed.png --square
 ```
 
-The script accepts raster formats supported by Pillow and writes a lossless RGBA PNG to a different path. It trims transparent borders, or near-white borders on opaque images, while retaining interior colors and transparency. Use `--background transparent` or `--background '#ffffff'` to select detection explicitly; `--tolerance` adjusts background-color tolerance, `--alpha-threshold` adjusts alpha detection, and `--padding` adds transparent pixels around the crop. `--square` centers the artwork without resizing it. Blank images are rejected. These tools are only needed when preparing a new logo; normal XeLaTeX compilation uses the bundled result.
-
-Run the image-processing checks with:
+The utility trims transparent or near-white borders and writes a lossless RGBA PNG to a different path. `--square` centers the artwork without resizing it. Optional `--background`, `--tolerance`, `--alpha-threshold` and `--padding` control detection and canvas padding. Pillow is needed only for asset preparation, not for CV compilation. When modifying the utility, run its existing checks:
 
 ```sh
 python -m unittest discover -s scripts -p 'test_prepare_logo.py'
 ```
 
-## Content sources and items to verify
+### Icons and fonts
 
-Prepared on 10 September 2026.
-
-- Experience titles, locations, supervisors, contact details, education dates, thesis grade, oral presentation and awards come from the supplied `Profile.pdf`.
-- Research summary and doctoral topic are editorially condensed from the supplied profile and previously shared doctoral research context. They do not imply additional experimental outcomes.
-- The uploaded profile gives **September 2023–October 2025** for the MSc and **November 2025–February 2026** for the Research Engineer role. These dates are preserved. Earlier conversation summaries mention diploma completion in early 2026 and an October 2025 employment start; verify the intended CV dates against official records before application.
-- The duplicated “The Top Prize Scholarship of Excellence” lines in LinkedIn are consolidated into one entry because distinct dates/award instances were not supplied. No award years or language proficiency levels were invented.
-- Grammar of the Wave: standard bibliography metadata now follows the [ACL Anthology EMNLP 2026 Main record](https://aclanthology.org/2026.emnlp-main.290/), superseding the earlier arXiv-based metadata. The arXiv identifier is retained as supplementary metadata.
-- EmoDynamiX: title, author order, proceedings and DOI follow ACL Anthology. Source: https://aclanthology.org/2025.naacl-long.81/ (accessed 10 September 2026). Oral status is from the uploaded profile.
-- **Language-Guided Time-Series Event Detection with Zero-Shot Cross-Modal Grounding**: standard bibliography metadata and the public link now follow the [ACL Anthology EMNLP 2026 Findings record](https://aclanthology.org/2026.findings-emnlp.229/), replacing the earlier provisional metadata. Per the user's confirmation, its third author, Sky Chenwei Wan, is the corresponding author; the CV records that role with `cvcorresponding = {3}`.
-
-No expected PhD graduation year, programming proficiency claims, award dates or unpublished identifiers were inferred.
-
-## Academic service update
-
-The user-supplied LinkedIn volunteering screenshot supplies the reviewer roles: Association for Computational Linguistics (February 2025–present), reviewing for ACL, EMNLP and EACL; IEEE (July 2025–present), reviewing for IEEE Transactions on Affective Computing and IEEE Transactions on Audio, Speech and Language Processing. Venue names follow the supplied screenshot. Impact factors are omitted from the CV.
-
-## Reference-inspired typography update
-
-The type pairing and restrained palette follow the design language of [Danqi Chen’s homepage](https://www.cs.princeton.edu/~danqic/index.html): Newsreader for the name and section headings, Inter for body text, navy-charcoal text, pale blue-gray rules, and deep navy accents (`#24486B`). The layout is adapted for an A4 CV rather than reproducing a webpage. The fonts are bundled as static instances derived from their Google Fonts variable releases; accompanying SIL OFL licenses are included. No online font service is required when compiling.
-
-All three honors are explicitly associated with **Soochow University**, as confirmed by the user. Education is the first section, followed by Publications, Professional Experience, Invited Talks, Academic Service and Honors & Awards. The separate Research Interests section has been removed.
-
-Highlight labels are automatically uppercased. `cvhighlightcolor` accepts a named LaTeX color: `oral` (deep navy), `award` (slate blue), or `spotlight` (steel blue). Its default is `oral`. Define additional colors in `cv-style.sty` as needed. For example:
-
-```bibtex
-cvhighlight = {Best Paper},
-cvhighlightcolor = {award},
-```
-
-Only use award labels when the distinction is confirmed. An omitted `cvhighlight` produces no tag.
-
-## Venue emphasis
-
-Venue names use deep navy semibold italic text, controlled by `\pubvenue`. Additional notes use smaller neutral gray text, controlled by `\pubnote`. Publication highlights remain independent colored tags. Venue content still comes from `cvvenue` in the BibTeX database.
-
-## Bibliography metadata and display labels
-
-The two EMNLP records in `publications.bib` use the standard metadata exported by ACL Anthology, including titles, author order, editors, proceedings, dates, publisher, DOI, pages and ISBN. The custom CV fields are maintained separately: venue display labels are `EMNLP Main`, `EMNLP Findings` and `NAACL Main`; all notes read `Long paper`. EmoDynamiX retains the user-supplied Sky Chenwei Wan author name and HAL link. Its complete HAL and PDF fields remain in the database, while the compact CV style prints only its selected fields.
-
-Education uses `\degreefield{degree}{discipline}`: Inter semibold for the degree and Inter italic for the discipline, separated by a light vertical bar. Grades, rankings, funding and doctoral collaboration details use `itemize` lists with the same navy bullets, 12 pt left margin and spacing as experience descriptions. These lists sit below the degree within the education text column and use the standard body font (10.2/12.8 pt), body color and justified alignment. Dates and locations retain the secondary-text style. Font styles use the bundled real font files.
-
-## Consecutive positions
-
-Use `\begin{positiongroup}{institution}{overall dates}` for consecutive appointments at the same institution, and `\careerrole{title}{dates}{location}{description}` for each appointment. The shared institution heading shows the overall employment span on the right, matching an ordinary entry's institution/date row. Each role shows its own dates in small upright parentheses after the title, with its own location at the right edge, preserving the ordinary role/location layout. Locations are specified per appointment even when they are the same. A subtle vertical timeline connects the roles, and the group is kept on one page. Non-consecutive appointments (e.g. the SLB internship and subsequent doctorate) retain individual entries in chronological order. This component uses the standard `tikz` package.
-
-All work-experience titles use the shared `\cvrole{...}` style: Inter Italic at regular weight, 10.2 pt with 12.8 pt line spacing. Both `\entry` and `\careerrole` use it; institution headings stay semibold, while dates and locations remain upright.
-
-The opening `\cvsummary{...}` and all experience bullet lists use `\cvbody`: Inter Regular, 10.2 pt with 12.8 pt line spacing, in the body color `ink`. This includes the Fudan entry on page two. Grouped positions explicitly use the same font and color inside TikZ, with justified paragraphs (`align=justify` and `\cvjustify`) and the document's 1 pt paragraph spacing restored after TikZ creates its minipage. The shared institution heading has a 2.5 pt gap before the first role, matching the ordinary entry's heading-to-role rhythm. Roles retain a 15 pt indent and the same right edge as other entries. The 6 pt separation between role boxes accounts for the restored paragraph/list spacing; outer spacing is 5 pt before and 1 pt after the group.
-
-```tex
-\begin{positiongroup}{Institution}{Overall dates}
-\careerrole{Most recent position}{Dates}{Location}{Description.}
-\careerrole{Earlier position}{Dates}{Location}{Description.}
-\end{positiongroup}
-```
-
-The Inria / Télécom Paris internship lists the supervisors supplied by the user: Prof. Matthieu Labeau (S2A, Télécom Paris) and Prof. Chloé Clavel (ALMAnaCH, Inria Paris).
-
-## Chronological numbering
-
-Publication numbers increase with the `year` field within each type, across the single Publications section. Earlier publications get smaller numbers. Equal-year entries follow their order in the `\nocite` list; undated entries come last. Display order is newest-year first, independently of numbering. Thus the current display is 2026: EMNLP Main `[C2]`, EMNLP Findings `[C3]`; then 2025: NAACL Main `[C1]`. Experience citations update automatically.
-
-
-## November 2026 CV update
-
-- Education logos are in `assets/`; the vector IP Paris source and PDF plus the original and prepared Soochow PNGs are included. Compilation uses the prepared Soochow image. The logos span only the institution and degree lines.
-- MSc: grade 18.0/20.0, Mention Très Bien (with highest honors); IP Paris PhD Track full tuition waiver (14k €). BEng: grade 3.9/4.0, rank 1/79. These details come from the supplied education screenshot; the waiver amount is presented as a rounded two-year figure using compact k/m notation at the user's request.
-- Talk types use 10.2 pt labels in pale blue boxes without parentheses: **Seminar** in semibold for SLB, and regular-weight `Talk` for the other reports. Dates supplied by the user are 26 Nov 2026 (SLB), 21 Oct 2026 (Inria) and 2 May 2025 (NAACL). The SLB title is plain text until a slides link is supplied. Journal reviewing precedes conference reviewing. TAFFC: since 2026; TASLP and conference reviewing: since 2025, as confirmed by the user.
-- Journal metrics: 2025 JIF 11.3 (TAFFC) and 5.2 (TASLP), published in June 2026. Source: IEEE Title List, September 2026, pages 2–3, https://open.ieee.org/wp-content/uploads/IEEE-Title-List-September-2026-CAPES.pdf (checked 18 November 2026). The source attributes TASLP metrics to its former IEEE/ACM title. Values in the CV link to this source.
-- Awards: Excellent Undergraduate Thesis, June 2023; Chu Ching-wen Scholarship, October 2022; The Top Prize Scholarship of Excellence, October 2022 and October 2020. Dates follow the supplied screenshot.
-
-
-## Summary and layout refinement
-
-The research summary now states the vision of trustworthy AI for sustainable human–AI co-evolution, followed by multimodal and neuro-symbolic methods, multi-agent collaboration, knowledge base construction and retrieval, and industrial applications. Education annotations align with the page text margin; the PhD research-focus annotation is removed. Journal impact factors sit on the same line as each journal name.
-
-
-## Current color and contact settings
-
-The palette uses deep navy headings (#18324D), navy accents (#24486B), charcoal body text (#202C3A), slate-blue secondary text (#66788A), and pale blue-gray rules (#D9E2EA). Official university logos retain their original colors. Education annotations are indented 12 mm to align with institution and degree text. The contact email and mailto link are cwan5@slb.com.
-
-The contact row pairs location, email, LinkedIn, Google Scholar and GitHub labels with navy vector icons from Font Awesome Free 6.7.2. The GitHub item links to https://github.com/cw-wan. Entries use whitespace instead of bullet separators. `\contactitem{icon-name}{label}` and `\contactsep` in `cv-style.sty` control icon size and spacing; wrap the entire item in `\href` to make both icon and label clickable. The original SVGs and preconverted PDF assets are bundled, so regular compilation needs no additional package, conversion tool or network access. See `assets/icons/README.md` for sources and attribution.
-
-
-## Unified date typography
-
-Standalone dates in education, experience (including grouped roles), talks, reviewing, awards and the footer use `\cvdate{...}`, defined once in `cv-style.sty`: Inter Regular, 9.3 pt with 11 pt line spacing, muted blue-gray (#66788A). This uses the shared secondary-text size `\cvsmall`. Publication year group headings use the main-content size; JIF annotations use the secondary-text size.
-
-
-## Education clarification
-
-The PhD in Computer Science starts in September 2026; this is distinct from the SLB CIFRE contract, which starts in May 2026 in Research Experience. The MSc field is Computer Science (Data and Artificial Intelligence).
+Contact icons are bundled Font Awesome Free 6.7.2 SVG sources and vector PDF derivatives. See [icon sources and attribution](assets/icons/README.md) for their license and conversion details. Font licenses are included in [Inter-OFL.txt](fonts/Inter-OFL.txt) and [Newsreader-OFL.txt](fonts/Newsreader-OFL.txt).
