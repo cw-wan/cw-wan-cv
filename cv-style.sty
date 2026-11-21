@@ -95,6 +95,28 @@
 
 \fancypagestyle{firstpage}{\fancyhead{}}
 
+% Rebalance first-page whitespace only after TeX has selected the page break.
+% Move 60% of the natural bottom slack above the name, capped at 8 mm.
+% Measuring a copy leaves pagination, internal spacing and later pages intact.
+\newlength{\cvheadroomlimit}
+\setlength{\cvheadroomlimit}{8mm}
+\makeatletter
+\newbox\cv@naturalpage
+\newdimen\cv@headroom
+\let\cv@texttop\@texttop
+\def\@texttop{%
+  \cv@texttop
+  \ifnum\c@page=1\relax
+    \setbox\cv@naturalpage=\vbox{\unvcopy\@outputbox}%
+    \cv@headroom=\dimexpr\@colht-\ht\cv@naturalpage\relax
+    \cv@headroom=.6\cv@headroom
+    \ifdim\cv@headroom>\cvheadroomlimit
+      \cv@headroom=\cvheadroomlimit
+    \fi
+    \ifdim\cv@headroom>\z@\vskip\cv@headroom\fi
+  \fi}
+\makeatother
+
 % Semantic highlight tags. Default: deep navy; override color per .bib entry.
 \definecolor{oral}{HTML}{24486B}
 \definecolor{award}{HTML}{395A72}
