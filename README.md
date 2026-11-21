@@ -28,7 +28,7 @@ xelatex main.tex
 xelatex main.tex
 ```
 
-Uses BibTeX, not Biber. Required standard packages: geometry, fontspec, xcolor, enumitem, titlesec, fancyhdr, needspace, hyperref, tikz and graphicx. Validated with XeLaTeX and BibTeX from TeX Live 2023 and MiKTeX 25.4.
+Uses BibTeX, not Biber. Required standard packages: geometry, fontspec, babel (English), ragged2e, xcolor, enumitem, titlesec, fancyhdr, needspace, hyperref, tikz and graphicx. Validated with XeLaTeX and BibTeX from TeX Live 2023 and MiKTeX 25.4.
 
 ## Project files
 
@@ -108,11 +108,13 @@ The optional `cvvenue` field controls the short venue displayed on the CV. Keep 
 
 To reuse this project for another person, change the owner-name comparisons in `cv-publications.bst`; these control both name bolding and automatic entry highlighting.
 
-The publication list follows the supplied reference format: `C2. Authors. Title in Venue.` Each entry is one continuous paragraph with natural line wrapping. The owner retains a full, bold name; other authors use surnames and given-name initials from the BibTeX record, with an ampersand before the last author. Titles are italic and linked; venues are semibold italic. Short venue labels stay together, and no trailing year is added. Display labels have a final period, while inline citations remain `[C2]`. Author-role markers, year groups, entry backgrounds and highlight badges are preserved. Pages, publisher, DOI and abstracts remain in the database but are not printed. Use a journal/conference bibliography style when reusing the database for a manuscript.
+The publication list starts each entry with `C2. Authors. Title`, allowing natural line wrapping, then places `In Venue.` on a new line with the same body line spacing. The owner retains a full, bold name; other authors use surnames and given-name initials from the BibTeX record, with an ampersand before the last author. Titles are italic and linked; venues are semibold italic. Short venue labels stay together, and no trailing year is added. Display labels have a final period, while inline citations remain `[C2]`. Author-role markers, year groups, entry backgrounds and highlight badges are preserved. Pages, publisher, DOI and abstracts remain in the database but are not printed. Use a journal/conference bibliography style when reusing the database for a manuscript.
 
 ## Layout adjustments
 
-Edit the `ink`, `accent`, `muted` and `hairline` colors in `cv-style.sty`; `pubshade` controls the first- and equal-first-author entry background. Body font and leading are defined by `\cvbody`, applied at the start of the document and explicitly inside components. Section spacing is the same on both pages; no page-wide font reduction is applied. The first page includes the complete Inria experience, with an explicit page break before Fudan University. The Inria supervisor line wraps naturally instead of forcing an extra line. Publication entries stay together on one page. As experience grows, revisit the page break and allow additional pages rather than shrinking text excessively. The footer date is intentionally fixed and should be updated when revising the CV.
+Edit the `ink`, `accent`, `muted` and `hairline` colors in `cv-style.sty`; `pubshade` controls the first- and equal-first-author entry background. Body font and leading are defined by `\cvbody`, applied at the start of the document and explicitly inside components. Section spacing is the same on both pages (8 pt before, 7 pt after); no page-wide font reduction is applied. Page margins are 22 mm left/right, 18 mm top and 17.5 mm bottom, with a 9 mm footer skip. The first page includes Education, all Publications and the complete current CIFRE experience; the second page starts with the consecutive Télécom Paris positions. Pagination is automatic, with publication entries and grouped positions kept together. The Inria supervisor line wraps naturally instead of forcing an extra line. As experience grows, review pagination and allow additional pages rather than shrinking text excessively. The footer date is intentionally fixed and should be updated when revising the CV.
+
+Paragraphs in the summary, experience descriptions, publications and talk titles use justified alignment with automatic English hyphenation. The shared `\cvjustify` restores normal line-breaking rules inside minipages and TikZ nodes, with 1 em emergency stretch. `\JustifyingParindent` is explicitly zero; final lines retain their natural length. Institution/date rows, short labels and centered logos keep their existing alignment.
 
 ### Typography standard
 
@@ -121,12 +123,12 @@ Edit the `ink`, `accent`, `muted` and `hairline` colors in `cv-style.sty`; `pubs
 | Name | 34 / 39 | Newsreader name heading |
 | Section heading | 16 / 18 | Newsreader section headings on both pages |
 | Institution | 11 / 14 | `\cvinstitution`, semibold education/employment headings; the header subtitle uses regular weight |
-| Main content | 10.2 / 12.8 | `\cvbody`: summary, all experience descriptions, publication text, talk event headings, reviewer venues and award titles |
-| Secondary content | 9.3 / 11 | `\cvsmall`: dates, locations, contact labels, explanatory notes, talk titles, publication legend and labels, JIF annotations |
+| Main content | 10.2 / 12.8 | `\cvbody`: summary, education details, all experience descriptions, publication text, talk event headings/titles/type labels, reviewer venues and award titles |
+| Secondary content | 9.3 / 11 | `\cvsmall`: dates, locations, contact labels, experience/award notes, publication legend and labels, JIF annotations |
 | Running header/page number | 8 / 10 | Page navigation only |
 | Highlight badge | 7.5 / 9 | Compact ORAL and similar badges |
 
-Role titles use the main-content size in italic. Paper titles use italic; venue names use semibold italic. Review journal/conference names use the main-content size and body color, with smaller dates and JIF annotations. Talk titles use the annotation size (9.3 pt) and the full width to the right of the year; event headings remain at the main-content size.
+Role titles use the main-content size in italic. Paper titles use italic; venue names use semibold italic. Review journal/conference names use the main-content size and body color, with smaller dates and JIF annotations. Talk titles also use the main-content size in italic (10.2/12.8 pt). `\talkentry{host and location}{date}{type}{title}` puts the host at the left and the complete date at the right, following the experience layout. Beneath that row, the full title occupies the left 138 mm; the right 25 mm holds the type label in a pale blue box, separated by a 3 mm gutter. Dates use `D Mon YYYY`; reports have 4 pt spacing. Institution names in Professional Experience and Invited Talks link to their official websites while retaining the heading color.
 
 ## Prepare raster logos
 
@@ -169,7 +171,7 @@ The user-supplied LinkedIn volunteering screenshot supplies the reviewer roles: 
 
 The type pairing and restrained palette follow the design language of [Danqi Chen’s homepage](https://www.cs.princeton.edu/~danqic/index.html): Newsreader for the name and section headings, Inter for body text, navy-charcoal text, pale blue-gray rules, and deep navy accents (`#24486B`). The layout is adapted for an A4 CV rather than reproducing a webpage. The fonts are bundled as static instances derived from their Google Fonts variable releases; accompanying SIL OFL licenses are included. No online font service is required when compiling.
 
-All three honors are explicitly associated with **Soochow University**, as confirmed by the user. Education is the first section, followed by Professional Experience, Publications, Invited Talks, Academic Service and Honors & Awards. The separate Research Interests section has been removed.
+All three honors are explicitly associated with **Soochow University**, as confirmed by the user. Education is the first section, followed by Publications, Professional Experience, Invited Talks, Academic Service and Honors & Awards. The separate Research Interests section has been removed.
 
 Highlight labels are automatically uppercased. `cvhighlightcolor` accepts a named LaTeX color: `oral` (deep navy), `award` (slate blue), or `spotlight` (steel blue). Its default is `oral`. Define additional colors in `cv-style.sty` as needed. For example:
 
@@ -188,7 +190,7 @@ Venue names use deep navy semibold italic text, controlled by `\pubvenue`. Addit
 
 The two EMNLP records in `publications.bib` use the standard metadata exported by ACL Anthology, including titles, author order, editors, proceedings, dates, publisher, DOI, pages and ISBN. The custom CV fields are maintained separately: venue display labels are `EMNLP Main`, `EMNLP Findings` and `NAACL Main`; all notes read `Long paper`. EmoDynamiX retains the user-supplied Sky Chenwei Wan author name and HAL link. Its complete HAL and PDF fields remain in the database, while the compact CV style prints only its selected fields.
 
-Education uses `\degreefield{degree}{discipline}`: Inter semibold for the degree and Inter italic for the discipline, separated by a light vertical bar. Font styles use the bundled real font files.
+Education uses `\degreefield{degree}{discipline}`: Inter semibold for the degree and Inter italic for the discipline, separated by a light vertical bar. Grades, rankings, funding and doctoral collaboration details use `itemize` lists with the same navy bullets, 12 pt left margin and spacing as experience descriptions. These lists sit below the degree within the education text column and use the standard body font (10.2/12.8 pt), body color and justified alignment. Dates and locations retain the secondary-text style. Font styles use the bundled real font files.
 
 ## Consecutive positions
 
@@ -196,7 +198,7 @@ Use `\begin{positiongroup}{institution}{overall dates}` for consecutive appointm
 
 All work-experience titles use the shared `\cvrole{...}` style: Inter Italic at regular weight, 10.2 pt with 12.8 pt line spacing. Both `\entry` and `\careerrole` use it; institution headings stay semibold, while dates and locations remain upright.
 
-The opening `\cvsummary{...}` and all experience bullet lists use `\cvbody`: Inter Regular, 10.2 pt with 12.8 pt line spacing, in the body color `ink`. This includes the Fudan entry on page two. Grouped positions explicitly use the same font and color inside TikZ, with normal font word spacing (`align=flush left`) and the document's 1 pt paragraph spacing restored after TikZ creates its minipage. The shared institution heading has a 2.5 pt gap before the first role, matching the ordinary entry's heading-to-role rhythm. Roles retain a 15 pt indent and the same right edge as other entries. The 6 pt separation between role boxes accounts for the restored paragraph/list spacing; outer spacing is 5 pt before and 1 pt after the group.
+The opening `\cvsummary{...}` and all experience bullet lists use `\cvbody`: Inter Regular, 10.2 pt with 12.8 pt line spacing, in the body color `ink`. This includes the Fudan entry on page two. Grouped positions explicitly use the same font and color inside TikZ, with justified paragraphs (`align=justify` and `\cvjustify`) and the document's 1 pt paragraph spacing restored after TikZ creates its minipage. The shared institution heading has a 2.5 pt gap before the first role, matching the ordinary entry's heading-to-role rhythm. Roles retain a 15 pt indent and the same right edge as other entries. The 6 pt separation between role boxes accounts for the restored paragraph/list spacing; outer spacing is 5 pt before and 1 pt after the group.
 
 ```tex
 \begin{positiongroup}{Institution}{Overall dates}
@@ -216,7 +218,7 @@ Publication numbers increase with the `year` field within each type, across the 
 
 - Education logos are in `assets/`; the vector IP Paris source and PDF plus the original and prepared Soochow PNGs are included. Compilation uses the prepared Soochow image. The logos span only the institution and degree lines.
 - MSc: grade 18.0/20.0, Mention Très Bien (with highest honors); IP Paris PhD Track full tuition waiver (14k €). BEng: grade 3.9/4.0, rank 1/79. These details come from the supplied education screenshot; the waiver amount is presented as a rounded two-year figure using compact k/m notation at the user's request.
-- Talk labels use `(Talk)`. Journal reviewing precedes conference reviewing. TAFFC: since 2026; TASLP and conference reviewing: since 2025, as confirmed by the user.
+- Talk types use 10.2 pt labels in pale blue boxes without parentheses: **Seminar** in semibold for SLB, and regular-weight `Talk` for the other reports. Dates supplied by the user are 26 Nov 2026 (SLB), 21 Oct 2026 (Inria) and 2 May 2025 (NAACL). The SLB title is plain text until a slides link is supplied. Journal reviewing precedes conference reviewing. TAFFC: since 2026; TASLP and conference reviewing: since 2025, as confirmed by the user.
 - Journal metrics: 2025 JIF 11.3 (TAFFC) and 5.2 (TASLP), published in June 2026. Source: IEEE Title List, September 2026, pages 2–3, https://open.ieee.org/wp-content/uploads/IEEE-Title-List-September-2026-CAPES.pdf (checked 18 November 2026). The source attributes TASLP metrics to its former IEEE/ACM title. Values in the CV link to this source.
 - Awards: Excellent Undergraduate Thesis, June 2023; Chu Ching-wen Scholarship, October 2022; The Top Prize Scholarship of Excellence, October 2022 and October 2020. Dates follow the supplied screenshot.
 

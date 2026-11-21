@@ -1,7 +1,9 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{cv-style}[2026/09/10 Quiet academic CV]
-\RequirePackage[a4paper,left=22mm,right=22mm,top=20mm,bottom=19mm,headheight=14pt,headsep=7mm,footskip=10mm]{geometry}
+\RequirePackage[a4paper,left=22mm,right=22mm,top=18mm,bottom=17.5mm,headheight=14pt,headsep=7mm,footskip=9mm]{geometry}
 \RequirePackage{fontspec}
+\RequirePackage[english]{babel}
+\RequirePackage{ragged2e}
 \setmainfont{Inter}[Path=fonts/,Extension=.ttf,UprightFont=*-Regular,RawFeature={-calt},BoldFont=*-SemiBold,ItalicFont=*-Italic,BoldItalicFont=*-SemiBoldItalic]
 \newfontfamily\displayfont{Newsreader-Medium.ttf}[Path=fonts/]
 \RequirePackage{xcolor}
@@ -13,6 +15,8 @@
 % Shared summary/experience body typography, including text inside TikZ nodes.
 \newcommand{\cvbody}{\normalfont\fontsize{10.2}{12.8}\selectfont\color{ink}}
 \newcommand{\cvsmall}{\normalfont\fontsize{9.3}{11}\selectfont}
+% Restore normal line-breaking rules even inside minipages and TikZ nodes.
+\newcommand{\cvjustify}{\justifying\fussy\setlength{\emergencystretch}{1em}}
 \newcommand{\cvinstitution}[1]{{\normalfont\bfseries\fontsize{11}{14}\selectfont\color{ink}#1}}
 \newcommand{\cvsummary}[1]{{\cvbody #1\par}}
 % Shared secondary-text size; dates retain their muted blue-gray color.
@@ -34,17 +38,31 @@
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 \setlength{\parindent}{0pt}
+\setlength{\JustifyingParindent}{0pt}
 \setlength{\parskip}{1pt}
 \AtBeginDocument{\cvbody}
-\raggedright
-\setlength{\emergencystretch}{2em}
+\cvjustify
 \titleformat{\section}{\displayfont\fontsize{16}{18}\selectfont\color{heading}}{}{0pt}{}[\vspace{4pt}{\color{hairline}\titlerule[0.45pt]}]
-\titlespacing*{\section}{0pt}{10pt}{7pt}
-\setlist[itemize]{leftmargin=12pt,label=\textcolor{accent}{\textbullet},itemsep=1.5pt,topsep=3pt,parsep=0pt,partopsep=0pt,before=\cvbody}
+\titlespacing*{\section}{0pt}{8pt}{7pt}
+\setlist[itemize]{leftmargin=12pt,label=\textcolor{accent}{\textbullet},itemsep=1.5pt,topsep=3pt,parsep=0pt,partopsep=0pt,before={\cvbody\cvjustify}}
 % One role style for both individual appointments and grouped positions.
 \newcommand{\cvrole}[1]{{\cvbody\itshape #1}}
 \newcommand{\entry}[4]{\Needspace{5\baselineskip}\vspace{5pt}\cvinstitution{#1}\hfill\cvdate{#2}\par\vspace{-1pt}\cvrole{#3}\hfill{\cvsmall\color{muted}#4}\par}
 \newcommand{\detail}[1]{{\cvsmall\color{muted}#1\par}}
+% Talk metadata follows the same institution/date pattern as experience.
+\newcommand{\talktype}[1]{\begingroup\setlength{\fboxsep}{1.5pt}%
+  \colorbox{accent!10}{\cvbody\color{accent}#1}\endgroup}
+\newcommand{\talkentry}[4]{%
+  \par\addvspace{4pt}\noindent\begin{minipage}{\linewidth}
+    \setlength{\parskip}{1pt}%
+    \noindent\cvbody\textbf{#1}\hfill\cvdate{#2}\par
+    \noindent\begin{minipage}[t]{\dimexpr\linewidth-28mm\relax}
+      \noindent\cvbody\itshape\cvjustify #4\par
+    \end{minipage}\hspace{3mm}%
+    \begin{minipage}[t]{25mm}
+      \raggedleft\talktype{#3}\par
+    \end{minipage}%
+  \end{minipage}\par}
 \newcommand{\pubcite}[1]{\cite{#1}}
 \newcommand{\pubtitle}[2]{\if\relax\detokenize{#1}\relax{\color{ink}\mdseries\itshape #2}\else\href{#1}{\color{ink}\mdseries\itshape #2}\fi}
 \newcommand{\pubauthors}[1]{{\cvbody #1}}
@@ -63,14 +81,14 @@
   \def\pubentrycolor{white}\ifnum#1=1\def\pubentrycolor{pubshade}\fi
   \noindent\hspace*{-3pt}\colorbox{\pubentrycolor}{%
     \begin{minipage}[t]{\dimexpr\linewidth-3pt\relax}%
-      \noindent\cvbody\raggedright\setlength{\parskip}{2pt}#2\par
+      \noindent\cvbody\cvjustify\setlength{\parskip}{2pt}#2\par
     \end{minipage}}\par
   \endgroup
 }{}
 \makeatletter
 \renewenvironment{thebibliography}[1]{%
   \list{\@biblabel{\@arabic\c@enumiv}}{\settowidth\labelwidth{C99.}\leftmargin\labelwidth\advance\leftmargin\labelsep\usecounter{enumiv}\setlength{\itemsep}{4pt}\setlength{\parsep}{2pt}\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}%
-  \cvbody\raggedright\clubpenalty=10000\widowpenalty=10000
+  \cvbody\cvjustify\clubpenalty=10000\widowpenalty=10000
 }{\endlist}
 \renewcommand{\@biblabel}[1]{{\cvsmall\color{muted}#1.}}
 \makeatother
@@ -105,9 +123,10 @@
     \coordinate (careerstart) at ([yshift=-6pt]careerprevious.south west);
   \fi
   \node[anchor=north west,inner sep=0pt,outer sep=0pt,text width=\careertextwidth,
-    font=\cvbody,text=ink,align=flush left] (careerrole\arabic{careerposition}) at (careerstart) {%
+    font=\cvbody,text=ink,align=justify] (careerrole\arabic{careerposition}) at (careerstart) {%
     % TikZ creates a minipage: restore the document's paragraph spacing here.
     \setlength{\parskip}{1pt}%
+    \cvjustify
     \cvrole{#1}\enspace\cvdate{(#2)}\hfill{\cvsmall\color{muted}#3}\par
     #4};
   \coordinate (careerdot\arabic{careerposition}) at ([xshift=-11pt,yshift=-5.5pt]careerrole\arabic{careerposition}.north west);

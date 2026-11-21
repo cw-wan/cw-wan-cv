@@ -201,7 +201,7 @@ FUNCTION {output.entry}
     }
   if$
   format.venue duplicate$ empty$ 'pop$
-    { "in~\pubvenue{" write$ write$ "}" write$ }
+    { "\newline In~\pubvenue{" write$ write$ "}" write$ }
   if$
   type$ "patent" = number empty$ not and
     { "\enspace\textbullet\enspace Patent " write$ number write$ } 'skip$ if$
