@@ -54,11 +54,11 @@ All sizes below are TeX points, expressed as font size / line spacing. Inter use
 | Section heading | 16 / 18 | Newsreader, with a pale rule below |
 | Institution | 11 / 14 | Inter semibold, `\cvinstitution`; the identity subtitle uses the same size in regular weight |
 | Body | 10.2 / 12.8 | `\cvbody`: summary, degrees, education details, experience, publications, talks, reviewer venues and award titles |
-| Secondary | 9.3 / 11 | `\cvsmall`: contact labels, dates, locations, supervisor/lab notes, award institutions, publication legend/labels and JIF annotations |
+| Secondary | 9.3 / 11 | `\cvsmall`: contact labels, dates, locations, supervisor notes, award institutions, publication legend/labels and JIF annotations |
 | Running header and page number | 8 / 10 | Page navigation |
 | Publication distinction badge | 7.5 / 9 | Compact ORAL and similar tags |
 
-`\cvrole` gives all experience titles the body size in regular-weight italic. Paper and talk titles also use body-size italic; publication venues use semibold italic. Talk type badges use the body size, making them more prominent than publication distinction badges. `\cvdate` applies the secondary size and muted color consistently to standalone dates, including the footer.
+`\cvrole{title}{department}` gives all experience titles the body size in regular-weight italic, followed by a muted vertical bar and an upright department in the body size and color. Paper and talk titles also use body-size italic; publication venues use semibold italic. Talk type badges use the body size, making them more prominent than publication distinction badges. `\cvdate` applies the secondary size and muted color consistently to standalone dates, including the footer.
 
 ### Color and links
 
@@ -130,28 +130,30 @@ A pale background identifies first- and equal-first-author papers. Distinctions 
 ### Professional experience
 
 ```tex
-\entry{institution}{dates}{role}{location}
-\detail{Lab and/or supervisors.}
+\entry{institution}{dates}{role}{department}{location}
+\detail{Supervised by ...}
 \begin{itemize}
   \item Research contribution or responsibility.
 \end{itemize}
 ```
 
-Ordinary appointments pair a semibold institution with dates on the first row and an italic role with location on the second. Dates and locations remain upright in the secondary style. Lab and supervisor notes use `\detail`; contributions use body-size bullets. Current responsibilities use present-tense verbs, completed roles use past tense, and paper references use `\pubcite{key}`.
+Ordinary appointments pair a semibold institution with dates on the first row. The second row places the italic role, a muted vertical bar and the upright department at left, with location aligned right. Both role and department use the body size and color; dates and locations remain upright in the secondary style. Pass an empty department argument `{}` when none is specified, which also omits the separator. Supervisor notes use `\detail`, list names without parenthetical affiliations and use `and` before the final name; contributions use body-size bullets. Current responsibilities use present-tense verbs, completed roles use past tense, and paper references use `\pubcite{key}`.
+
+Experience bullets use `\textbf` (Inter semibold) sparingly to emphasize a research focus, named contribution or result. Limit emphasis to one or two short phrases per role, counting existing distinctions such as thesis grades or oral presentations. Keep the surrounding prose at regular weight.
 
 Consecutive appointments at one institution share an institution heading and overall date span:
 
 ```tex
 \begin{positiongroup}{Institution}{Overall dates}
-  \careerrole{Most recent role}{Role dates}{Location}{%
+  \careerrole{Most recent role}{Department}{Role dates}{Location}{%
     \begin{itemize}
       \item Contribution.
     \end{itemize}}
-  \careerrole{Earlier role}{Role dates}{Location}{Description.}
+  \careerrole{Earlier role}{Department}{Role dates}{Location}{Description.}
 \end{positiongroup}
 ```
 
-Each role retains its own location on the right and dates in small upright parentheses after its title. A subtle timeline connects the roles within a 15 pt inset. The shared heading has a 2.5 pt gap before the first role; role boxes are separated by 6 pt. The TikZ component restores the same body typography, justification and paragraph spacing as ordinary entries. The whole group stays on one page. Non-consecutive appointments at the same employer remain separate chronological entries.
+Each role uses the same title/department pattern on the left. Its dates and location form a single right-aligned group in the upright secondary style: `Mar 2026 -- May 2026; Palaiseau, France`. A semicolon separates these fields, and the group stays on one line. The institution heading retains the overall date span. A subtle timeline connects the roles within a 15 pt inset. The shared heading has a 2.5 pt gap before the first role; role boxes are separated by 6 pt. The TikZ component restores the same body typography, justification and paragraph spacing as ordinary entries. The whole group stays on one page. Non-consecutive appointments at the same employer remain separate chronological entries.
 
 ### Invited talks
 
