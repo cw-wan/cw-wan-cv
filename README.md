@@ -53,12 +53,12 @@ All sizes below are TeX points, expressed as font size / line spacing. Inter use
 | Name | 34 / 39 | Newsreader, main identity heading |
 | Section heading | 16 / 18 | Newsreader, with a pale rule below |
 | Institution | 11 / 14 | Inter semibold, `\cvinstitution`; the identity subtitle uses the same size in regular weight |
-| Body | 10.2 / 12.8 | `\cvbody`: summary, degrees, education details, experience, publications, talks, reviewer venues and award titles |
-| Secondary | 9.3 / 11 | `\cvsmall`: contact labels, dates, locations, supervisor notes, award institutions, publication legend/labels and JIF annotations |
+| Body | 10.2 / 12.8 | `\cvbody`: summary, degrees, education details, experience, publications, talk hosts/titles, reviewer venues and award titles |
+| Secondary | 9.3 / 11 | `\cvsmall`: contact labels, dates, locations, supervisor notes, award institutions, talk type labels, publication legend/labels and JIF annotations |
 | Running header and page number | 8 / 10 | Page navigation |
 | Publication distinction badge | 7.5 / 9 | Compact ORAL and similar tags |
 
-`\cvrole{title}{department}` gives all experience titles the body size in regular-weight italic, followed by a muted vertical bar and an upright department in the body size and color. Paper and talk titles also use body-size italic; publication venues use semibold italic. Talk type badges use the body size, making them more prominent than publication distinction badges. `\cvdate` applies the secondary size and muted color consistently to standalone dates, including the footer.
+`\cvrole{title}{department}` gives all experience titles the body size in regular-weight italic, followed by a muted vertical bar and an upright department in the body size and color. Paper and talk titles also use body-size italic; publication venues use semibold italic. Talk type badges use the secondary size with generous vertical padding. `\cvdate` applies the secondary size and muted color consistently to standalone dates, including the footer.
 
 ### Color and links
 
@@ -72,6 +72,8 @@ All sizes below are TeX points, expressed as font size / line spacing. Inter use
 | `pubshade` | `#F0F4F8` | First- and equal-first-author publication backgrounds |
 
 Links are clickable text without visible borders. Paper titles retain the body color even when linked. Experience institutions and talk hosts likewise retain their heading color through `\href{url}{\color{ink}Name}`. Linked talk titles and JIF annotations use the accent color. University logos retain their original colors; contact icon PDFs have their own navy fill and need asset recoloring if the palette changes.
+
+Publication distinction badges and talk type labels share `\cvbadge{background}{horizontal padding}{vertical padding}{text}`: a filled rounded rectangle with a 1.5 pt corner radius and text aligned to the surrounding baseline. Publication badges use 3.5 pt padding on all sides; talk labels use 3.5 pt horizontal and 3 pt vertical padding. Their respective font sizes and pale background colors preserve the existing hierarchy.
 
 ### Page geometry and adaptive whitespace
 
@@ -91,7 +93,14 @@ Pagination is automatic. Each publication, talk and consecutive-position group s
 
 Substantive paragraphs use justified alignment with English hyphenation. `\cvjustify` restores normal line-breaking rules inside minipages and TikZ nodes and allows 1 em of emergency stretch. First-line indentation is zero, default paragraph spacing is 1 pt, and final lines keep their natural length. Publication entries and lists set their own local paragraph spacing.
 
-Institution/date and role/location rows share the same right edge. Section headings have 8 pt before and 7 pt after; their 0.45 pt rule sits below the title. The shared `itemize` style uses navy bullets, a 12 pt left margin, 1.5 pt between items and 3 pt above/below the list. Components reuse these styles rather than setting smaller text to fit.
+Institution/date and role/location rows share the same right edge. Section headings have 8 pt before and 7 pt after; their 0.45 pt rule sits below the title. Two shared lengths in `cv-style.sty` control the base spacing between entries and their internal items:
+
+| Spacing level | Value | Application |
+| --- | --- | --- |
+| `\cventrysep` | 5 pt | Education, experience, publications, talks, awards, consecutive-role boxes, publication year groups and service categories |
+| `\cvitemsep` | 2 pt | Bullet items and their list boundaries, reviewer venue rows, education detail separation and publication paragraph spacing |
+
+The shared `itemize` style uses navy bullets and a 12 pt left margin. Block components use `\addvspace` to avoid stacking adjacent vertical skips; bibliography items and TikZ role boxes apply the same entry length through their own layout mechanisms. These are spacing controls in addition to text line height and the existing component padding.
 
 Dates use compact forms such as `Sep 2026 -- Present`; talks use `D Mon YYYY`. Monetary amounts use compact k/m notation with a nonbreaking space before the currency, for example `14k~€`.
 
@@ -112,6 +121,8 @@ The header stacks the name, professional subtitle and contact row. Vertical skip
 
 A 9 mm logo box and 3 mm gutter establish a text column inset by 12 mm. The logo spans the institution and degree rows. The first row pairs the institution with dates; the second pairs the degree and discipline with location. `\degreefield` uses a semibold degree, a light vertical bar and an italic discipline.
 
+`\schoollogo` adds a soft crescent shadow that hugs the lower-right edge of each emblem. Low-opacity vector circles, offset 0.28 mm right and 0.36 mm down, taper from a subtle dark edge to the white page. The shadow is clipped outside the 4.5 mm emblem radius and excluded from layout measurements, preserving the original artwork, 9 mm logo size and existing text alignment. The effect is drawn in TikZ without modifying the logo assets or adding a frame.
+
 Details sit below in the same text column and use the shared body-size bullet list. Grades, rankings, funding and doctoral collaboration information are substantive content. Their bullets and list spacing match experience descriptions; dates and locations retain the secondary style.
 
 ### Publications
@@ -125,7 +136,7 @@ C2. Authors. Paper title
 
 Authors and title flow together with natural wrapping. The owner name is full and semibold; other authors use surnames and initials, with an ampersand before the final author. Titles are italic and link to the record's `url`. `In Venue.` starts a new line; the short venue is semibold italic and omits the year because the year group already supplies it.
 
-A pale background identifies first- and equal-first-author papers. Distinctions such as ORAL use a separate compact badge after the venue, separated by one nonbreaking space. Publication entries have 4 pt list spacing and 3 pt background padding. The publication label remains outside the shaded text block.
+A pale background identifies first- and equal-first-author papers. Distinctions such as ORAL use a separate compact rounded badge after the venue, separated by one nonbreaking space. Publication entries use the shared `\cventrysep` list spacing and 3 pt background padding. The publication label remains outside the shaded text block.
 
 ### Professional experience
 
@@ -153,7 +164,7 @@ Consecutive appointments at one institution share an institution heading and ove
 \end{positiongroup}
 ```
 
-Each role uses the same title/department pattern on the left. Its dates and location form a single right-aligned group in the upright secondary style: `Mar 2026 -- May 2026; Palaiseau, France`. A semicolon separates these fields, and the group stays on one line. The institution heading retains the overall date span. A subtle timeline connects the roles within a 15 pt inset. The shared heading has a 2.5 pt gap before the first role; role boxes are separated by 6 pt. The TikZ component restores the same body typography, justification and paragraph spacing as ordinary entries. The whole group stays on one page. Non-consecutive appointments at the same employer remain separate chronological entries.
+Each role uses the same title/department pattern on the left. Its dates and location form a single right-aligned group in the upright secondary style: `Mar 2026 -- May 2026; Palaiseau, France`. A semicolon separates these fields, and the group stays on one line. The institution heading retains the overall date span. A subtle timeline connects the roles within a 15 pt inset. The shared heading has a 2.5 pt gap before the first role; role boxes use the shared `\cventrysep`. The TikZ component restores the same body typography, justification and paragraph spacing as ordinary entries. The whole group stays on one page. Non-consecutive appointments at the same employer remain separate chronological entries.
 
 ### Invited talks
 
@@ -163,7 +174,7 @@ Each role uses the same title/department pattern on the left. Its dates and loca
 
 The first row pairs a semibold host/location with a right-aligned full date. The second row reserves `\linewidth - 28mm` for the italic title, followed by a 3 mm gutter and a 25 mm right-aligned type column. With the current margins, the title column is 138 mm wide. Long titles wrap within their own column.
 
-Type labels have a pale blue background and no parentheses. The current Seminar label is semibold through `\textbf{Seminar}`; Talk labels are regular weight. Both use the body size. Entries have 4 pt separation and stay together across page breaks.
+Type labels have a pale blue rounded-rectangle background and no parentheses. The current Seminar label is semibold through `\textbf{Seminar}`; Talk labels are regular weight. Both use the secondary size (9.3/11 pt), with 3 pt vertical padding. Entries use the shared `\cventrysep` and stay together across page breaks.
 
 Use full paper titles for paper presentations and the event title for standalone seminars. Hosts link to official websites; titles link to slides when a URL is available. A title without slides remains plain text.
 
@@ -171,7 +182,7 @@ Use full paper titles for paper presentations and the event title for standalone
 
 Academic Service places journal reviewing before conference reviewing. Reviewer category headings are semibold; venue names use the standard body size and color. Journal JIF annotations are smaller, linked to their source and kept on the venue line. Service start dates align at the right edge.
 
-Honors & Awards pairs each semibold award title with its date, followed by the awarding institution in `\detail`. Entries have 4 pt separation. Multiple instances of the same award can share one title with semicolon-separated dates.
+Honors & Awards pairs each semibold award title with its date, followed by the awarding institution in `\detail`. Entries use the shared `\cventrysep`. Multiple instances of the same award can share one title with semicolon-separated dates.
 
 ## Publication data and numbering
 
