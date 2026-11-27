@@ -59,7 +59,13 @@
     {\cvbody\mbox{#2}}%
   \fi}
 \newcommand{\entry}[5]{\Needspace{5\baselineskip}\addvspace{\cventrysep}\cvinstitution{#1}\hfill\cvdate{#2}\par\vspace{-1pt}\cvrole{#3}{#4}\hfill{\cvsmall\color{muted}#5}\par}
-\newcommand{\detail}[1]{{\cvsmall\color{muted}#1\par}}
+% Shared note spacing: balance surrounding gaps without enlarging the entry.
+\newcommand{\detail}[1]{%
+  \par\nopagebreak\vspace{.5\cvitemsep}%
+  {\cvsmall\color{muted}#1\par}%
+  \vspace{-.5\cvitemsep}}
+% Supervisor notes also stay with the following contribution list.
+\newcommand{\experiencenote}[1]{\detail{#1}\nopagebreak}
 % Shared, baseline-aligned rounded background for compact semantic labels.
 \newcommand{\cvbadge}[4]{%
   \tikz[baseline=(cvbadge.base)]{%

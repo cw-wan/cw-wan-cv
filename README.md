@@ -102,6 +102,8 @@ Institution/date and role/location rows share the same right edge. Section headi
 
 The shared `itemize` style uses navy bullets and a 12 pt left margin. Block components use `\addvspace` to avoid stacking adjacent vertical skips; bibliography items and TikZ role boxes apply the same entry length through their own layout mechanisms. These are spacing controls in addition to text line height and the existing component padding.
 
+Standalone supporting notes share `\detail`: muted secondary text (9.3/11 pt), with half of `\cvitemsep` (1 pt) moved from below the note to above it. This balances the gaps around the smaller text without increasing entry height. The same rule applies to experience supervisors and award institutions; each note stays with the preceding title.
+
 Dates use compact forms such as `Sep 2026 -- Present`; talks use `D Mon YYYY`. Monetary amounts use compact k/m notation with a nonbreaking space before the currency, for example `14k~€`.
 
 ## Section and component patterns
@@ -142,13 +144,15 @@ A pale background identifies first- and equal-first-author papers. Distinctions 
 
 ```tex
 \entry{institution}{dates}{role}{department}{location}
-\detail{Supervised by ...}
+\experiencenote{Supervised by ...}
 \begin{itemize}
   \item Research contribution or responsibility.
 \end{itemize}
 ```
 
-Ordinary appointments pair a semibold institution with dates on the first row. The second row places the italic role, a muted vertical bar and the upright department at left, with location aligned right. Both role and department use the body size and color; dates and locations remain upright in the secondary style. Pass an empty department argument `{}` when none is specified, which also omits the separator. Supervisor notes use `\detail`, list names without parenthetical affiliations and use `and` before the final name; contributions use body-size bullets. Current responsibilities use present-tense verbs, completed roles use past tense, and paper references use `\pubcite{key}`.
+Ordinary appointments pair a semibold institution with dates on the first row. The second row places the italic role, a muted vertical bar and the upright department at left, with location aligned right. Both role and department use the body size and color; dates and locations remain upright in the secondary style. Pass an empty department argument `{}` when none is specified, which also omits the separator. Supervisor notes use `\experiencenote`, list names without parenthetical affiliations and use `and` before the final name; contributions use body-size bullets. Current responsibilities use present-tense verbs, completed roles use past tense, and paper references use `\pubcite{key}`.
+
+`\experiencenote` uses the shared `\detail` typography and spacing, matching award institution notes. It additionally keeps the note with the following contribution list.
 
 Experience bullets use `\textbf` (Inter semibold) sparingly to emphasize a research focus, named contribution or result. Limit emphasis to one or two short phrases per role, counting existing distinctions such as thesis grades or oral presentations. Keep the surrounding prose at regular weight.
 
@@ -182,7 +186,7 @@ Use full paper titles for paper presentations and the event title for standalone
 
 Academic Service places journal reviewing before conference reviewing. Reviewer category headings are semibold; venue names use the standard body size and color. Journal JIF annotations are smaller, linked to their source and kept on the venue line. Service start dates align at the right edge.
 
-Honors & Awards pairs each semibold award title with its date, followed by the awarding institution in `\detail`. Entries use the shared `\cventrysep`. Multiple instances of the same award can share one title with semicolon-separated dates.
+Honors & Awards pairs each semibold award title with its date, followed by the awarding institution in `\detail`, with the same note typography and spacing as experience supervisors. Entries use the shared `\cventrysep`. Multiple instances of the same award can share one title with semicolon-separated dates.
 
 ## Publication data and numbering
 
