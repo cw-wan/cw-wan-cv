@@ -60,6 +60,19 @@ All sizes below are TeX points, expressed as font size / line spacing. Inter use
 
 `\cvrole{title}{department}` gives all experience titles the body size in regular-weight italic, followed by a muted vertical bar and an upright department in the body size and color. Paper and talk titles also use body-size italic; publication venues use semibold italic. Talk type badges use the secondary size with generous vertical padding. `\cvdate` applies the secondary size and muted color consistently to standalone dates, including the footer.
 
+### Paper and talk title capitalization
+
+One switch in the preamble of `main.tex`, after `\usepackage{cv-style}`, controls all paper and talk titles:
+
+```tex
+\cvsentencecasetrue   % Sentence case (currently enabled).
+% \cvsentencecasefalse % Restore the original source capitalization.
+```
+
+Sentence case capitalizes the first word of the title and the first word after each colon, while lowercasing ordinary words. For example, `Language-Guided Time-Series Perception: Solutions and Challenges` displays as `Language-guided time-series perception: Solutions and challenges`. `\cvtitlecase` applies this at display time; author names, venues, institutions, section headings and link destinations keep their original spelling.
+
+Wrap acronyms and proper names in `\NoCaseChange{...}`, such as `\NoCaseChange{VLM}` and `\NoCaseChange{EmoDynamiX}`, in both `.bib` titles and talk titles. Keep original title capitalization in the source so the switch is reversible. In BibTeX, use `title = {{\NoCaseChange{EmoDynamiX}}: Emotional Support ...}`: protective braces belong around the name, not the entire title. This uses the modern LaTeX kernel's case-changing commands, with no additional package or preprocessing step.
+
 ### Color and links
 
 | Token | Color | Role |
@@ -173,14 +186,14 @@ Each role uses the same title/department pattern on the left. Its dates and loca
 ### Invited talks
 
 ```tex
-\talkentry{host and location}{date}{type}{title}
+\talkentry{host and location}{date}{type}{title}{slides URL}
 ```
 
 The first row pairs a semibold host/location with a right-aligned full date. The second row reserves `\linewidth - 28mm` for the italic title, followed by a 3 mm gutter and a 25 mm right-aligned type column. With the current margins, the title column is 138 mm wide. Long titles wrap within their own column.
 
 Type labels have a pale blue rounded-rectangle background and no parentheses. The current Seminar label is semibold through `\textbf{Seminar}`; Talk labels are regular weight. Both use the secondary size (9.3/11 pt), with 3 pt vertical padding. Entries use the shared `\cventrysep` and stay together across page breaks.
 
-Use full paper titles for paper presentations and the event title for standalone seminars. Hosts link to official websites; titles link to slides when a URL is available. A title without slides remains plain text.
+Use full paper titles for paper presentations and the event title for standalone seminars. Hosts link to official websites. The title uses the global capitalization switch and links to the separate slides URL argument; use an empty final argument `{}` when slides are unavailable. Keep `\href` out of the title argument so casing only processes display text.
 
 ### Academic service and honors
 

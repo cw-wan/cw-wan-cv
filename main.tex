@@ -1,6 +1,8 @@
 % Compile with XeLaTeX + BibTeX (or: latexmk -xelatex main.tex).
 \documentclass[11pt,a4paper]{article}
 \usepackage{cv-style}
+% Sentence case for paper/talk titles; use \cvsentencecasefalse for source casing.
+\cvsentencecasetrue
 \begin{document}
 \thispagestyle{firstpage}
 % Tie order within each year; publication labels and citations stay synchronized.
@@ -81,11 +83,11 @@
 
 \section{Invited Talks}
 \talkentry{\href{https://www.slb.com/}{\color{ink}SLB (Schlumberger)}, Clamart, France}{26 Nov 2026}{\textbf{Seminar}}{%
-\href{https://github.com/cw-wan/elegant-academic-slides-skill/blob/main/examples/v0.2.0/slb-webinar-2026-11-25/SLB-Webinar-261125.pdf}{Language-Guided Time-Series Perception: Solutions and Challenges}}
+Language-Guided Time-Series Perception: Solutions and Challenges}{https://github.com/cw-wan/elegant-academic-slides-skill/blob/main/examples/v0.2.0/slb-webinar-2026-11-25/SLB-Webinar-261125.pdf}
 \talkentry{\href{https://www.inria.fr/en/inria-paris-centre}{\color{ink}Inria Paris Centre}, Paris, France}{21 Oct 2026}{Talk}{%
-\href{https://github.com/cw-wan/SELA/blob/main/SELA_EMNLP26_Slides.pdf}{Grammar of the Wave: Towards Explainable Multivariate Time Series Event Detection via Neuro-Symbolic VLM Agents}}
+Grammar of the Wave: Towards Explainable Multivariate Time Series Event Detection via Neuro-Symbolic \NoCaseChange{VLM} Agents}{https://github.com/cw-wan/SELA/blob/main/SELA_EMNLP26_Slides.pdf}
 \talkentry{\href{https://2025.naacl.org/}{\color{ink}NAACL 2025}, Albuquerque, New Mexico, USA}{2 May 2025}{Talk}{%
-\href{https://github.com/cw-wan/EmoDynamiX-v2/blob/master/Slides.pdf}{EmoDynamiX: Emotional Support Dialogue Strategy Prediction by Modelling MiXed Emotions and Discourse Dynamics}}
+\NoCaseChange{EmoDynamiX}: Emotional Support Dialogue Strategy Prediction by Modelling MiXed Emotions and Discourse Dynamics}{https://github.com/cw-wan/EmoDynamiX-v2/blob/master/Slides.pdf}
 
 \section{Academic Service}
 \textbf{Journal Reviewer}\par

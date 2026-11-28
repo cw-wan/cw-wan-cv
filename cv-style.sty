@@ -21,6 +21,26 @@
 \newcommand{\cvsummary}[1]{{\cvbody #1\par}}
 % Shared secondary-text size; dates retain their muted blue-gray color.
 \newcommand{\cvdate}[1]{{\cvsmall\color{muted}#1}}
+% Display-only title casing; main.tex chooses the mode for papers and talks.
+\newif\ifcvsentencecase
+\cvsentencecasefalse
+\ExplSyntaxOn
+\seq_new:N \l__cv_title_parts_seq
+\cs_new_protected:Npn \cv_sentence_title:n #1
+  {
+    \group_begin:
+      \exp_args:NNx \seq_set_split:Nnn \l__cv_title_parts_seq
+        { \char_generate:nn { 58 } { 12 } } {#1}
+      \seq_map_indexed_inline:Nn \l__cv_title_parts_seq
+        {
+          \int_compare:nNnT {##1} > {1} { \char_generate:nn {58} {12} ~ }
+          \text_titlecase_first:n { \text_lowercase:n {##2} }
+        }
+    \group_end:
+  }
+\NewDocumentCommand{\cvtitlecase}{m}
+  { \ifcvsentencecase \cv_sentence_title:n {#1} \else #1\fi }
+\ExplSyntaxOff
 \color{ink}
 \RequirePackage{enumitem}
 \RequirePackage{titlesec}
@@ -75,19 +95,24 @@
 % Talk metadata follows the same institution/date pattern as experience.
 \newcommand{\talktype}[1]{%
   \cvbadge{accent!10}{3.5pt}{3pt}{\cvsmall\color{accent}#1}}
-\newcommand{\talkentry}[4]{%
+\newcommand{\talkentry}[5]{%
   \par\addvspace{\cventrysep}\noindent\begin{minipage}{\linewidth}
     \setlength{\parskip}{1pt}%
     \noindent\cvbody\textbf{#1}\hfill\cvdate{#2}\par
     \noindent\begin{minipage}[t]{\dimexpr\linewidth-28mm\relax}
-      \noindent\cvbody\itshape\cvjustify #4\par
+      \noindent\cvbody\itshape\cvjustify
+      \if\relax\detokenize{#5}\relax
+        \cvtitlecase{#4}%
+      \else
+        \href{#5}{\cvtitlecase{#4}}%
+      \fi\par
     \end{minipage}\hspace{3mm}%
     \begin{minipage}[t]{25mm}
       \raggedleft\talktype{#3}\par
     \end{minipage}%
   \end{minipage}\par}
 \newcommand{\pubcite}[1]{\cite{#1}}
-\newcommand{\pubtitle}[2]{\if\relax\detokenize{#1}\relax{\color{ink}\mdseries\itshape #2}\else\href{#1}{\color{ink}\mdseries\itshape #2}\fi}
+\newcommand{\pubtitle}[2]{\if\relax\detokenize{#1}\relax{\color{ink}\mdseries\itshape\cvtitlecase{#2}}\else\href{#1}{\color{ink}\mdseries\itshape\cvtitlecase{#2}}\fi}
 \newcommand{\pubauthors}[1]{{\cvbody #1}}
 \newcommand{\pubvenue}[1]{{\cvbody\bfseries\itshape\color{accent}#1}}
 \newcommand{\pubnote}[1]{{\cvsmall\color{muted}#1}}
